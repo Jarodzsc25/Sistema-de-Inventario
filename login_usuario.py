@@ -4,7 +4,7 @@ usuarios = {
     "usuario": "clave"
 }
 
-#primero se pedira que se ingrese el usurio, seguido de la contraseña
+#primero se pedira que se ingrese el usuria, seguido de la contraseña
 #ahora se agrego un meno intereactivo para que el programa este funcionando sin que este finalice hasta que se decida
 def login():
         while True:
