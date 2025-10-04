@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="corrigiendo errores">
+      <change afterPath="$PROJECT_DIR$/tabla_cliente.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login_usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/login_usuario.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_conexion.py" beforeDir="false" afterPath="$PROJECT_DIR$/tabla_conexion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/tabla_menu.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Jarodzsc25"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Jarodzsc25/Sistema-de-Inventario.git",
+    "accountId": "682b1766-b7c5-4328-8616-960be1f13fba"
+  }
+}]]></component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 4
 }]]></component>
   <component name="ProjectId" id="33c6G2UQez9zAFQP9sA2W9Pvmk6" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -18,7 +52,18 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.login_usuario.executor": "Run",
+    "Python.tabla_cliente.executor": "Run",
+    "Python.tabla_menu.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -37,11 +82,75 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1759603913892</updated>
-      <workItem from="1759603914955" duration="1000" />
+      <workItem from="1759603914955" duration="3389000" />
     </task>
+    <task id="LOCAL-00001" summary="guardar carpeta">
+      <option name="closed" value="true" />
+      <created>1759604013270</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1759604013270</updated>
+    </task>
+    <task id="LOCAL-00002" summary="guardar conexion">
+      <option name="closed" value="true" />
+      <created>1759604205924</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1759604205924</updated>
+    </task>
+    <task id="LOCAL-00003" summary="guardar conexion">
+      <option name="closed" value="true" />
+      <created>1759604295772</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1759604295772</updated>
+    </task>
+    <task id="LOCAL-00004" summary="guardar menu para conexion">
+      <option name="closed" value="true" />
+      <created>1759604890054</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759604890054</updated>
+    </task>
+    <task id="LOCAL-00005" summary="corrigiendo errores">
+      <option name="closed" value="true" />
+      <created>1759605822568</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1759605822568</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="guardar carpeta" />
+    <MESSAGE value="guardar conexion" />
+    <MESSAGE value="guardar menu para conexion" />
+    <MESSAGE value="corrigiendo errores" />
+    <option name="LAST_COMMIT_MESSAGE" value="corrigiendo errores" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759607226770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$login_usuario.coverage" NAME="login_usuario Coverage Results" MODIFIED="1759605517591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_cliente.coverage" NAME="tabla_cliente Coverage Results" MODIFIED="1759606563922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

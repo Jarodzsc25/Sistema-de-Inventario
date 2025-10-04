@@ -1,14 +1,17 @@
 import psycopg2
 
-try:
-    conectar_bd = psycopg2.connect(
-        host="localhost",
-        database="prueba",
-        user="postgres",
-        password="latorrededruaka",
-        port="5432"
-    )
-    cursor = conectar_bd.cursor()
-    print("Conectado a PostgreSQL")
-except Exception as e:
-    print("Error al conectar a PostgreSQL:", e)
+def conectar_bd():
+    try:
+        conexion = psycopg2.connect(
+            host="localhost",
+            database="prueba",
+            user="postgres",
+            password="latorrededruaka",
+            port="5432"
+        )
+        cursor = conexion.cursor()
+        print("Conectado a PostgreSQL correctamente.")
+        return conexion, cursor
+    except Exception as e:
+        print("Error al conectar a PostgreSQL:", e)
+        return None, None
