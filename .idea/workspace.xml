@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="corrigiendo errores">
-      <change afterPath="$PROJECT_DIR$/tabla_cliente.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login_usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/login_usuario.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabla_conexion.py" beforeDir="false" afterPath="$PROJECT_DIR$/tabla_conexion.py" afterDir="false" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia.">
+      <change afterPath="$PROJECT_DIR$/tabla_detalle_pedido.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tabla_distribuidor.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tabla_empleado.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tabla_pedido.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tabla_producto.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tabla_recibo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tabla_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/tabla_menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +84,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1759603913892</updated>
-      <workItem from="1759603914955" duration="3389000" />
+      <workItem from="1759603914955" duration="4738000" />
     </task>
     <task id="LOCAL-00001" summary="guardar carpeta">
       <option name="closed" value="true" />
@@ -124,7 +126,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759605822568</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia.">
+      <option name="closed" value="true" />
+      <created>1759607381954</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1759607381954</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,10 +156,11 @@
     <MESSAGE value="guardar conexion" />
     <MESSAGE value="guardar menu para conexion" />
     <MESSAGE value="corrigiendo errores" />
-    <option name="LAST_COMMIT_MESSAGE" value="corrigiendo errores" />
+    <MESSAGE value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia." />
+    <option name="LAST_COMMIT_MESSAGE" value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759607226770" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759609409890" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$login_usuario.coverage" NAME="login_usuario Coverage Results" MODIFIED="1759605517591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_cliente.coverage" NAME="tabla_cliente Coverage Results" MODIFIED="1759606563922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
