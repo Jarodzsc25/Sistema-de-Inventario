@@ -15,3 +15,6 @@ def login():
     else:
         print("Usuario o contraseña incorrectos.")
         return None
+def validar_login_gui(usuario, contraseña):
+    """Valida credenciales desde la interfaz gráfica."""
+    return usuario in usuarios and usuarios[usuario] == contraseña
