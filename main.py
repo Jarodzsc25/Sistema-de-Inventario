@@ -10,12 +10,12 @@ def obtener_conexion():
         host="localhost",
         database="prueba",
         user="postgres",
-        password="latorrededruaka",  # 🔒 reemplaza por la tuya
+        password="latorrededruaka",
         port="5432"
     )
 
 # ============================================================
-# 🚀 Configuración de FastAPI
+# Configuración de FastAPI
 # ============================================================
 app = FastAPI(title="API Sistema de Ventas", description="API conectada a PostgreSQL", version="1.0")
 
@@ -31,7 +31,7 @@ class Cliente(BaseModel):
 
 
 # ============================================================
-# 🧩 RUTAS DE LA API
+# RUTAS DE LA API
 # ============================================================
 
 @app.get("/")
@@ -67,7 +67,7 @@ def agregar_cliente(cliente: Cliente):
         conexion.commit()
         cursor.close()
         conexion.close()
-        return {"mensaje": "✅ Cliente agregado correctamente"}
+        return {"mensaje": "Cliente agregado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -83,4 +83,4 @@ def eliminar_cliente(id_cliente: int):
     conexion.commit()
     cursor.close()
     conexion.close()
-    return {"mensaje": f"🗑️ Cliente con id {id_cliente} eliminado correctamente"}
+    return {"mensaje": f"Cliente con id {id_cliente} eliminado correctamente"}
