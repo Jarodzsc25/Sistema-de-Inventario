@@ -4,10 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. SE REITERA LA FALLA DEL LISTADO">
-      <change afterPath="$PROJECT_DIR$/menu_grafico.py" afterDir="false" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se conecto exitosamente a postman">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/login_usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/login_usuario.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login_usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/login_usuario.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/menu_grafico.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/menu_grafico.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_cliente.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_cliente.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_conexion.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_conexion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_detalle_pedido.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_detalle_pedido.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_distribuidor.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_distribuidor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_empleado.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_empleado.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_menu.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_pedido.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_pedido.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_producto.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_producto.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabla_recibo.py" beforeDir="false" afterPath="$PROJECT_DIR$/movimiento de tablas/tabla_recibo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,25 +57,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.login_usuario.executor": "Run",
-    "Python.menu_grafico.executor": "Run",
-    "Python.tabla_cliente.executor": "Run",
-    "Python.tabla_menu.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.login_usuario.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.menu_grafico.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tabla_cliente.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tabla_menu.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -82,7 +99,11 @@
       <option name="presentableId" value="Default" />
       <updated>1759603913892</updated>
       <workItem from="1759603914955" duration="4808000" />
-      <workItem from="1759870989105" duration="298000" />
+      <workItem from="1759870989105" duration="1037000" />
+      <workItem from="1759926020977" duration="899000" />
+      <workItem from="1759929486100" duration="545000" />
+      <workItem from="1759951249807" duration="3329000" />
+      <workItem from="1760039611201" duration="899000" />
     </task>
     <task id="LOCAL-00001" summary="guardar carpeta">
       <option name="closed" value="true" />
@@ -140,7 +161,31 @@
       <option name="project" value="LOCAL" />
       <updated>1759609620194</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="se agrego una pequeña interfaz de usuario para asi crear un login">
+      <option name="closed" value="true" />
+      <created>1759871532361</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1759871532361</updated>
+    </task>
+    <task id="LOCAL-00009" summary="se conecto exitosamente a postman">
+      <option name="closed" value="true" />
+      <created>1759954200637</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1759954200637</updated>
+    </task>
+    <task id="LOCAL-00010" summary="se conecto exitosamente a postman">
+      <option name="closed" value="true" />
+      <created>1759954377333</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1759954377333</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,12 +209,15 @@
     <MESSAGE value="corrigiendo errores" />
     <MESSAGE value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia." />
     <MESSAGE value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. SE REITERA LA FALLA DEL LISTADO" />
-    <option name="LAST_COMMIT_MESSAGE" value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. SE REITERA LA FALLA DEL LISTADO" />
+    <MESSAGE value="se agrego una pequeña interfaz de usuario para asi crear un login" />
+    <MESSAGE value="se conecto exitosamente a postman" />
+    <option name="LAST_COMMIT_MESSAGE" value="se conecto exitosamente a postman" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759871455843" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759609409890" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759929700287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$login_usuario.coverage" NAME="login_usuario Coverage Results" MODIFIED="1759605517591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$main.coverage" NAME="main Coverage Results" MODIFIED="1759951820782" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/postman" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_cliente.coverage" NAME="tabla_cliente Coverage Results" MODIFIED="1759606563922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
