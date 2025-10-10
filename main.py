@@ -2,9 +2,13 @@ from flask import Flask, request, jsonify
 import psycopg2
 from psycopg2 import extras
 
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+
+
 app = Flask(__name__)
 
-# ⚙️ Conexión a la base de datos PostgreSQL
+#Conexión a la base de datos PostgreSQL
 DB_CONFIG = {
     "host": "localhost",
     "database": "ventas",
@@ -18,13 +22,13 @@ def get_connection():
     return psycopg2.connect(**DB_CONFIG)
 
 
-# ✅ Ruta principal (para probar conexión)
+#Ruta principal (para probar conexión)
 @app.route('/')
 def index():
     return "✅ API funcionando correctamente. Usa /personas"
 
 
-# 🧾 1️⃣ Obtener todas las personas
+#Obtener todas las personas
 @app.route('/personas', methods=['GET'])
 def get_personas():
     conn = get_connection()
@@ -36,7 +40,7 @@ def get_personas():
     return jsonify(personas)
 
 
-# 🔎 2️⃣ Obtener una persona por ID
+#Obtener una persona por ID
 @app.route('/personas/<int:id_persona>', methods=['GET'])
 def get_persona(id_persona):
     conn = get_connection()
@@ -51,7 +55,7 @@ def get_persona(id_persona):
     return jsonify({"error": "Persona no encontrada"}), 404
 
 
-# ➕ 3️⃣ Crear nueva persona
+#Crear nueva persona
 @app.route('/personas', methods=['POST'])
 def create_persona():
     data = request.get_json()
@@ -81,7 +85,7 @@ def create_persona():
     return jsonify({"mensaje": "Persona creada correctamente", "id_persona": id_nuevo}), 201
 
 
-# ✏️ 4️⃣ Editar persona
+#Editar persona
 @app.route('/personas/<int:id_persona>', methods=['PUT'])
 def update_persona(id_persona):
     data = request.get_json()
@@ -110,7 +114,7 @@ def update_persona(id_persona):
     return jsonify({"mensaje": "Persona actualizada correctamente"})
 
 
-# ❌ 5️⃣ Eliminar persona
+#Eliminar persona
 @app.route('/personas/<int:id_persona>', methods=['DELETE'])
 def delete_persona(id_persona):
     conn = get_connection()
@@ -122,6 +126,74 @@ def delete_persona(id_persona):
     return jsonify({"mensaje": "Persona eliminada correctamente"})
 
 
-# 🚀 Iniciar servidor
+
+
+
+
+bcrypt = Bcrypt(app)
+CORS(app)
+
+#Ruta para registrar usuario (asociado a una persona existente)
+@app.route('/usuarios', methods=['POST'])
+def create_usuario():
+    data = request.get_json()
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Encriptar contraseña antes de guardarla
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+
+    try:
+        cur.execute("""
+            INSERT INTO usuario (id_usuario, username, password, id_rol)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id_usuario;
+        """, (
+            data['id_persona'],   # id_usuario = id_persona
+            data['username'],
+            hashed_password,
+            data['id_rol']
+        ))
+        conn.commit()
+        new_id = cur.fetchone()[0]
+        return jsonify({"mensaje": "Usuario creado correctamente", "id_usuario": new_id}), 201
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 400
+    finally:
+        cur.close()
+        conn.close()
+
+
+# 🔓 Ruta de login
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+    cur.execute("""
+        SELECT u.id_usuario, u.username, u.password, r.nombre AS rol, 
+               p.nombre AS persona_nombre, p.primer_apellido, p.correo
+        FROM usuario u
+        JOIN rol r ON u.id_rol = r.id_rol
+        JOIN persona p ON u.id_usuario = p.id_persona
+        WHERE u.username = %s;
+    """, (username,))
+    user = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if user and bcrypt.check_password_hash(user['password'], password):
+        # No devolvemos la contraseña
+        del user['password']
+        return jsonify({"mensaje": "Login exitoso", "usuario": user}), 200
+    else:
+        return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+
+
+#Iniciar servidor
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
