@@ -5,7 +5,7 @@ from psycopg2 import extras
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
-
+from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
 
 #Conexión a la base de datos PostgreSQL
@@ -23,9 +23,9 @@ def get_connection():
 
 
 #Ruta principal (para probar conexión)
-@app.route('/')
-def index():
-    return "✅ API funcionando correctamente. Usa /personas"
+#@app.route('/')
+#def index():
+#    return "✅ API funcionando correctamente. Usa /personas"
 
 
 #Obtener todas las personas
@@ -165,7 +165,7 @@ def create_usuario():
         conn.close()
 
 
-# 🔓 Ruta de login
+#Ruta de login
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -194,6 +194,15 @@ def login():
         return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
 
 
-#Iniciar servidor
+from flask import render_template
+@app.route('/')
+def login_page():
+    return render_template('login.html')
+
+@app.route('/dashboard')
+def dashboard_page():
+    return render_template('dashboard.html')
+
+#Iniciar servidor siempre tiene que estar al final del codigo del main sinos fallara al momento de compilar los datos
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
