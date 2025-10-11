@@ -1,14 +1,12 @@
-from flask import Flask, request, jsonify
-import psycopg2
-from psycopg2 import extras
-
+from flask import Flask, request, jsonify, render_template
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from psycopg2 import connect, extras
 
-from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
+CORS(app)
 
-#Conexión a la base de datos PostgreSQL
 DB_CONFIG = {
     "host": "localhost",
     "database": "ventas",
@@ -17,155 +15,12 @@ DB_CONFIG = {
     "port": "5432"
 }
 
-
 def get_connection():
-    return psycopg2.connect(**DB_CONFIG)
+    return connect(**DB_CONFIG)
 
-
-#Ruta principal (para probar conexión)
-#@app.route('/')
-#def index():
-#    return "✅ API funcionando correctamente. Usa /personas"
-
-
-#Obtener todas las personas
-@app.route('/personas', methods=['GET'])
-def get_personas():
-    conn = get_connection()
-    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-    cur.execute("SELECT * FROM persona ORDER BY id_persona ASC;")
-    personas = cur.fetchall()
-    cur.close()
-    conn.close()
-    return jsonify(personas)
-
-
-#Obtener una persona por ID
-@app.route('/personas/<int:id_persona>', methods=['GET'])
-def get_persona(id_persona):
-    conn = get_connection()
-    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-    cur.execute("SELECT * FROM persona WHERE id_persona = %s;", (id_persona,))
-    persona = cur.fetchone()
-    cur.close()
-    conn.close()
-
-    if persona:
-        return jsonify(persona)
-    return jsonify({"error": "Persona no encontrada"}), 404
-
-
-#Crear nueva persona
-@app.route('/personas', methods=['POST'])
-def create_persona():
-    data = request.get_json()
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        INSERT INTO persona (nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        RETURNING id_persona;
-    """, (
-        data.get('nombre'),
-        data.get('primer_apellido'),
-        data.get('segundo_apellido'),
-        data.get('numero_ci'),
-        data.get('complemento_ci'),
-        data.get('correo'),
-        data.get('telefono'),
-        data.get('direccion')
-    ))
-
-    id_nuevo = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({"mensaje": "Persona creada correctamente", "id_persona": id_nuevo}), 201
-
-
-#Editar persona
-@app.route('/personas/<int:id_persona>', methods=['PUT'])
-def update_persona(id_persona):
-    data = request.get_json()
-    conn = get_connection()
-    cur = conn.cursor()
-
-    cur.execute("""
-        UPDATE persona
-        SET nombre=%s, primer_apellido=%s, segundo_apellido=%s, numero_ci=%s, complemento_ci=%s, correo=%s, telefono=%s, direccion=%s
-        WHERE id_persona=%s;
-    """, (
-        data.get('nombre'),
-        data.get('primer_apellido'),
-        data.get('segundo_apellido'),
-        data.get('numero_ci'),
-        data.get('complemento_ci'),
-        data.get('correo'),
-        data.get('telefono'),
-        data.get('direccion'),
-        id_persona
-    ))
-
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"mensaje": "Persona actualizada correctamente"})
-
-
-#Eliminar persona
-@app.route('/personas/<int:id_persona>', methods=['DELETE'])
-def delete_persona(id_persona):
-    conn = get_connection()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM persona WHERE id_persona = %s;", (id_persona,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"mensaje": "Persona eliminada correctamente"})
-
-
-
-
-
-
-bcrypt = Bcrypt(app)
-CORS(app)
-
-#Ruta para registrar usuario (asociado a una persona existente)
-@app.route('/usuarios', methods=['POST'])
-def create_usuario():
-    data = request.get_json()
-    conn = get_connection()
-    cur = conn.cursor()
-
-    # Encriptar contraseña antes de guardarla
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-
-    try:
-        cur.execute("""
-            INSERT INTO usuario (id_usuario, username, password, id_rol)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id_usuario;
-        """, (
-            data['id_persona'],   # id_usuario = id_persona
-            data['username'],
-            hashed_password,
-            data['id_rol']
-        ))
-        conn.commit()
-        new_id = cur.fetchone()[0]
-        return jsonify({"mensaje": "Usuario creado correctamente", "id_usuario": new_id}), 201
-    except Exception as e:
-        conn.rollback()
-        return jsonify({"error": str(e)}), 400
-    finally:
-        cur.close()
-        conn.close()
-
-
-#Ruta de login
+# =====================
+# LOGIN
+# =====================
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -187,14 +42,14 @@ def login():
     conn.close()
 
     if user and bcrypt.check_password_hash(user['password'], password):
-        # No devolvemos la contraseña
         del user['password']
         return jsonify({"mensaje": "Login exitoso", "usuario": user}), 200
     else:
         return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
 
-
-from flask import render_template
+# =====================
+# RUTAS HTML
+# =====================
 @app.route('/')
 def login_page():
     return render_template('login.html')
@@ -203,6 +58,119 @@ def login_page():
 def dashboard_page():
     return render_template('dashboard.html')
 
-#Iniciar servidor siempre tiene que estar al final del codigo del main sinos fallara al momento de compilar los datos
+# =====================
+# CRUD Distribuidor
+# =====================
+@app.route('/distribuidores', methods=['GET'])
+def obtener_distribuidores():
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+    cur.execute("SELECT * FROM distribuidor ORDER BY id_distribuidor ASC;")
+    distribuidores = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify(distribuidores)
+
+@app.route('/distribuidores', methods=['POST'])
+def agregar_distribuidor():
+    data = request.get_json()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO distribuidor (nit, nombre, contacto, telefono, direccion)
+        VALUES (%s, %s, %s, %s, %s) RETURNING id_distribuidor;
+    """, (data['nit'], data['nombre'], data.get('contacto'), data.get('telefono'), data.get('direccion')))
+    id_nuevo = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Distribuidor agregado', 'id_distribuidor': id_nuevo})
+
+@app.route('/distribuidores/<int:id_distribuidor>', methods=['PUT'])
+def actualizar_distribuidor(id_distribuidor):
+    data = request.get_json()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE distribuidor
+        SET nit=%s, nombre=%s, contacto=%s, telefono=%s, direccion=%s
+        WHERE id_distribuidor=%s;
+    """, (data['nit'], data['nombre'], data.get('contacto'), data.get('telefono'), data.get('direccion'), id_distribuidor))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Distribuidor actualizado'})
+
+@app.route('/distribuidores/<int:id_distribuidor>', methods=['DELETE'])
+def eliminar_distribuidor(id_distribuidor):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM distribuidor WHERE id_distribuidor = %s;", (id_distribuidor,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Distribuidor eliminado'})
+
+# =====================
+# CRUD Producto
+# =====================
+@app.route('/productos', methods=['GET'])
+def obtener_productos():
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+    cur.execute("""
+        SELECT p.*, d.nombre AS distribuidor_nombre
+        FROM producto p
+        JOIN distribuidor d ON p.id_distribuidor = d.id_distribuidor
+        ORDER BY p.id_producto ASC;
+    """)
+    productos = cur.fetchall()
+    cur.close()
+    conn.close()
+    return jsonify(productos)
+
+@app.route('/productos', methods=['POST'])
+def agregar_producto():
+    data = request.get_json()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO producto (codigo, nombre, descripcion, unidad, id_distribuidor)
+        VALUES (%s, %s, %s, %s, %s) RETURNING id_producto;
+    """, (data['codigo'], data['nombre'], data.get('descripcion'), data.get('unidad'), data['id_distribuidor']))
+    id_nuevo = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Producto agregado', 'id_producto': id_nuevo})
+
+@app.route('/productos/<int:id_producto>', methods=['PUT'])
+def actualizar_producto(id_producto):
+    data = request.get_json()
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE producto
+        SET codigo=%s, nombre=%s, descripcion=%s, unidad=%s, id_distribuidor=%s
+        WHERE id_producto=%s;
+    """, (data['codigo'], data['nombre'], data.get('descripcion'), data.get('unidad'), data['id_distribuidor'], id_producto))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Producto actualizado'})
+
+@app.route('/productos/<int:id_producto>', methods=['DELETE'])
+def eliminar_producto(id_producto):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM producto WHERE id_producto = %s;", (id_producto,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({'mensaje': 'Producto eliminado'})
+
+# =====================
+# Ejecutar servidor
+# =====================
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)

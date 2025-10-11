@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se consiguio iniciar sesion con usuario y tener las contrseñas incriptadas">
-      <change afterPath="$PROJECT_DIR$/templates/dashboard.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,8 +18,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -53,11 +53,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript Debug.dashboard.html.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.db.executor": "Run",
     "Python.login_usuario.executor": "Run",
     "Python.main.executor": "Run",
     "Python.menu_grafico.executor": "Run",
+    "Python.prueba.executor": "Run",
     "Python.tabla_cliente.executor": "Run",
     "Python.tabla_menu.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -101,7 +103,8 @@
       <workItem from="1759951249807" duration="3329000" />
       <workItem from="1760039611201" duration="1620000" />
       <workItem from="1760049070241" duration="2940000" />
-      <workItem from="1760120371078" duration="4020000" />
+      <workItem from="1760120371078" duration="4703000" />
+      <workItem from="1760210067651" duration="4712000" />
     </task>
     <task id="LOCAL-00001" summary="guardar carpeta">
       <option name="closed" value="true" />
@@ -207,7 +210,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760122426676</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato">
+      <option name="closed" value="true" />
+      <created>1760125707607</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1760125707607</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,14 +247,16 @@
     <MESSAGE value="se movio todos los archivos para un mejor control" />
     <MESSAGE value="se consiguio la conexion con postman nuevamente" />
     <MESSAGE value="se consiguio iniciar sesion con usuario y tener las contrseñas incriptadas" />
-    <option name="LAST_COMMIT_MESSAGE" value="se consiguio iniciar sesion con usuario y tener las contrseñas incriptadas" />
+    <MESSAGE value="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato" />
+    <option name="LAST_COMMIT_MESSAGE" value="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_menu.coverage" NAME="tabla_menu Coverage Results" MODIFIED="1759929700287" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$db.coverage" NAME="db Coverage Results" MODIFIED="1760049590166" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$login_usuario.coverage" NAME="login_usuario Coverage Results" MODIFIED="1759605517591" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Sistema_de_inventario$main.coverage" NAME="main Coverage Results" MODIFIED="1760123517389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$main.coverage" NAME="main Coverage Results" MODIFIED="1760214447433" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Sistema_de_inventario$prueba.coverage" NAME="prueba Coverage Results" MODIFIED="1760213742062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$tabla_cliente.coverage" NAME="tabla_cliente Coverage Results" MODIFIED="1759606563922" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
