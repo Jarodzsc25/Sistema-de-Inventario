@@ -12,7 +12,7 @@
     <p id="descripcion"></p>
     <button class="btn btn-secondary mb-4" onclick="cerrarSesion()">Cerrar sesión</button>
 
-    <div id="opciones"></div>
+    <div id="opciones" class="mb-3"></div>
     <div id="contenido"></div>
 </div>
 
@@ -27,7 +27,7 @@ if (!usuario) {
 document.getElementById('titulo').innerText = `Bienvenido, ${usuario.username}`;
 document.getElementById('descripcion').innerText =
     usuario.rol === 'Administrador'
-        ? 'Tienes acceso completo al sistema (Usuarios, Productos, Distribuidores, etc.)'
+        ? 'Tienes acceso completo al sistema (Usuarios, Productos, Distribuidores, Documentos, Movimientos, Kardex)'
         : usuario.rol === 'Cajero'
             ? 'Puedes registrar ventas y ver productos disponibles'
             : 'Acceso limitado al catálogo';
@@ -41,16 +41,22 @@ function cerrarSesion() {
 const opcionesDiv = document.getElementById('opciones');
 if (usuario.rol === 'Administrador') {
     opcionesDiv.innerHTML = `
-        <button class="btn btn-primary me-2" onclick="mostrarDistribuidores()">Distribuidores</button>
-        <button class="btn btn-success" onclick="mostrarProductos()">Productos</button>
+        <button class="btn btn-primary me-2 mb-2" onclick="mostrarDistribuidores()">Distribuidores</button>
+        <button class="btn btn-success me-2 mb-2" onclick="mostrarProductos()">Productos</button>
+        <button class="btn btn-info me-2 mb-2" onclick="mostrarDocumentos()">Documentos</button>
+        <button class="btn btn-warning me-2 mb-2" onclick="mostrarMovimientos()">Movimientos</button>
+        <button class="btn btn-dark mb-2" onclick="mostrarKardex()">Kardex</button>
     `;
 } else if (usuario.rol === 'Cajero') {
     opcionesDiv.innerHTML = `
-        <button class="btn btn-success" onclick="mostrarProductos()">Productos</button>
+        <button class="btn btn-success me-2 mb-2" onclick="mostrarProductos()">Productos</button>
+        <button class="btn btn-info mb-2" onclick="mostrarDocumentos()">Documentos</button>
     `;
 }
 
-// ===== Distribuidores =====
+// =====================
+// DISTRIBUIDORES
+// =====================
 async function mostrarDistribuidores() {
     const res = await axios.get(`${API_URL}/distribuidores`);
     const data = res.data;
@@ -123,7 +129,9 @@ async function eliminarDistribuidor(id) {
     mostrarDistribuidores();
 }
 
-// ===== Productos =====
+// =====================
+// PRODUCTOS
+// =====================
 async function mostrarProductos() {
     const res = await axios.get(`${API_URL}/productos`);
     const data = res.data;
@@ -197,6 +205,214 @@ async function eliminarProducto(id) {
     await axios.delete(`${API_URL}/productos/${id}`);
     mostrarProductos();
 }
+
+// =====================
+// DOCUMENTOS
+// =====================
+async function mostrarDocumentos() {
+    const res = await axios.get(`${API_URL}/documentos`);
+    const data = res.data;
+    let html = `<h4>Documentos</h4>
+        <button class="btn btn-primary mb-2" onclick="agregarDocumentoForm()">➕ Nuevo Documento</button>
+        <table class="table table-bordered">
+            <thead><tr>
+                <th>ID</th><th>Número</th><th>Fecha</th><th>Acción</th>
+            </tr></thead><tbody>`;
+    data.forEach(d => {
+        html += `<tr>
+            <td>${d.id_documento}</td>
+            <td><input value="${d.numero}" id="numero-${d.id_documento}" class="form-control"></td>
+            <td><input value="${d.fecha}" id="fecha-${d.id_documento}" class="form-control"></td>
+            <td>
+                <button class="btn btn-success btn-sm mb-1" onclick="editarDocumento(${d.id_documento})">Guardar</button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarDocumento(${d.id_documento})">Eliminar</button>
+            </td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarDocumentoForm() {
+    const html = `
+        <div class="card p-3 mb-3">
+            <h5>Agregar Documento</h5>
+            <input id="nuevo-numero" class="form-control mb-2" placeholder="Número">
+            <input id="nuevo-fecha" class="form-control mb-2" placeholder="Fecha (YYYY-MM-DD)">
+            <button class="btn btn-success" onclick="agregarDocumento()">Guardar</button>
+        </div>
+    `;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarDocumento() {
+    const data = {
+        numero: parseInt(document.getElementById('nuevo-numero').value),
+        fecha: document.getElementById('nuevo-fecha').value
+    };
+    await axios.post(`${API_URL}/documentos`, data);
+    mostrarDocumentos();
+}
+
+async function editarDocumento(id) {
+    const data = {
+        numero: parseInt(document.getElementById(`numero-${id}`).value),
+        fecha: document.getElementById(`fecha-${id}`).value
+    };
+    await axios.put(`${API_URL}/documentos/${id}`, data);
+    mostrarDocumentos();
+}
+
+async function eliminarDocumento(id) {
+    await axios.delete(`${API_URL}/documentos/${id}`);
+    mostrarDocumentos();
+}
+
+// =====================
+// MOVIMIENTOS
+// =====================
+async function mostrarMovimientos() {
+    const res = await axios.get(`${API_URL}/movimientos`);
+    const data = res.data;
+    let html = `<h4>Movimientos</h4>
+        <button class="btn btn-primary mb-2" onclick="agregarMovimientoForm()">➕ Nuevo Movimiento</button>
+        <table class="table table-bordered">
+            <thead><tr>
+                <th>ID</th><th>Tipo</th><th>Fecha</th><th>Glosa</th><th>Observación</th>
+                <th>Elaborado por</th><th>Cliente</th><th>Documento</th><th>Acción</th>
+            </tr></thead><tbody>`;
+    data.forEach(m => {
+        html += `<tr>
+            <td>${m.id_movimiento}</td>
+            <td><input value="${m.tipo}" id="tipo-${m.id_movimiento}" class="form-control"></td>
+            <td><input value="${m.fecha}" id="fechaM-${m.id_movimiento}" class="form-control"></td>
+            <td><input value="${m.glosa || ''}" id="glosa-${m.id_movimiento}" class="form-control"></td>
+            <td><input value="${m.observacion || ''}" id="observacion-${m.id_movimiento}" class="form-control"></td>
+            <td><input value="${m.elaborado_por || ''}" class="form-control" disabled></td>
+            <td><input value="${m.cliente || ''}" class="form-control" disabled></td>
+            <td><input value="${m.documento_numero || ''}" class="form-control" disabled></td>
+            <td>
+                <button class="btn btn-success btn-sm mb-1" onclick="editarMovimiento(${m.id_movimiento})">Guardar</button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarMovimiento(${m.id_movimiento})">Eliminar</button>
+            </td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarMovimientoForm() {
+    const html = `
+        <div class="card p-3 mb-3">
+            <h5>Agregar Movimiento</h5>
+            <input id="nuevo-tipo" class="form-control mb-2" placeholder="Tipo (I/S)">
+            <input id="nuevo-fechaM" class="form-control mb-2" placeholder="Fecha (YYYY-MM-DD)">
+            <input id="nuevo-glosa" class="form-control mb-2" placeholder="Glosa">
+            <input id="nuevo-observacion" class="form-control mb-2" placeholder="Observación">
+            <input id="nuevo-id_elaborador" class="form-control mb-2" placeholder="ID Usuario Elaborador">
+            <input id="nuevo-id_cliente" class="form-control mb-2" placeholder="ID Cliente">
+            <input id="nuevo-id_documento" class="form-control mb-2" placeholder="ID Documento">
+            <button class="btn btn-success" onclick="agregarMovimiento()">Guardar</button>
+        </div>
+    `;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarMovimiento() {
+    const data = {
+        tipo: document.getElementById('nuevo-tipo').value,
+        fecha: document.getElementById('nuevo-fechaM').value,
+        glosa: document.getElementById('nuevo-glosa').value,
+        observacion: document.getElementById('nuevo-observacion').value,
+        id_elaborador: parseInt(document.getElementById('nuevo-id_elaborador').value),
+        id_cliente: parseInt(document.getElementById('nuevo-id_cliente').value),
+        id_documento: parseInt(document.getElementById('nuevo-id_documento').value)
+    };
+    await axios.post(`${API_URL}/movimientos`, data);
+    mostrarMovimientos();
+}
+
+async function editarMovimiento(id) {
+    const data = {
+        tipo: document.getElementById(`tipo-${id}`).value,
+        fecha: document.getElementById(`fechaM-${id}`).value,
+        glosa: document.getElementById(`glosa-${id}`).value,
+        observacion: document.getElementById(`observacion-${id}`).value
+    };
+    await axios.put(`${API_URL}/movimientos/${id}`, data);
+    mostrarMovimientos();
+}
+
+async function eliminarMovimiento(id) {
+    await axios.delete(`${API_URL}/movimientos/${id}`);
+    mostrarMovimientos();
+}
+
+// =====================
+// KARDEX
+// =====================
+async function mostrarKardex() {
+    const res = await axios.get(`${API_URL}/kardex`);
+    const data = res.data;
+    let html = `<h4>Kardex</h4>
+        <button class="btn btn-primary mb-2" onclick="agregarKardexForm()">➕ Nuevo Registro</button>
+        <table class="table table-bordered">
+            <thead><tr>
+                <th>ID Movimiento</th><th>ID Producto</th><th>Producto</th><th>Tipo</th>
+                <th>Fecha</th><th>Cantidad</th><th>Unitario</th><th>Subtotal</th><th>Acción</th>
+            </tr></thead><tbody>`;
+    data.forEach(k => {
+        html += `<tr>
+            <td>${k.id_movimiento}</td>
+            <td>${k.id_producto}</td>
+            <td>${k.producto}</td>
+            <td>${k.tipo_movimiento}</td>
+            <td>${k.fecha}</td>
+            <td>${k.cantidad}</td>
+            <td>${k.unitario}</td>
+            <td>${k.suttotal}</td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="eliminarKardex(${k.id_movimiento}, ${k.id_producto})">Eliminar</button>
+            </td>
+        </tr>`;
+    });
+    html += `</tbody></table>`;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarKardexForm() {
+    const html = `
+        <div class="card p-3 mb-3">
+            <h5>Agregar Kardex</h5>
+            <input id="nuevo-id_movimiento" class="form-control mb-2" placeholder="ID Movimiento">
+            <input id="nuevo-id_producto" class="form-control mb-2" placeholder="ID Producto">
+            <input id="nuevo-cantidad" class="form-control mb-2" placeholder="Cantidad">
+            <input id="nuevo-unitario" class="form-control mb-2" placeholder="Precio Unitario">
+            <input id="nuevo-suttotal" class="form-control mb-2" placeholder="Subtotal">
+            <button class="btn btn-success" onclick="agregarKardex()">Guardar</button>
+        </div>
+    `;
+    document.getElementById('contenido').innerHTML = html;
+}
+
+async function agregarKardex() {
+    const data = {
+        id_movimiento: parseInt(document.getElementById('nuevo-id_movimiento').value),
+        id_producto: parseInt(document.getElementById('nuevo-id_producto').value),
+        cantidad: parseFloat(document.getElementById('nuevo-cantidad').value),
+        unitario: parseFloat(document.getElementById('nuevo-unitario').value),
+        suttotal: parseFloat(document.getElementById('nuevo-suttotal').value)
+    };
+    await axios.post(`${API_URL}/kardex`, data);
+    mostrarKardex();
+}
+
+async function eliminarKardex(id_movimiento, id_producto) {
+    const data = { id_movimiento, id_producto };
+    await axios.delete(`${API_URL}/kardex`, { data });
+    mostrarKardex();
+}
+
 </script>
 </body>
 </html>
