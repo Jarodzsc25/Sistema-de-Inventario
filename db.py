@@ -7,6 +7,6 @@ DB_CONFIG = {
     "password": "latorrededruaka",
     "port": "5432"
 }
-
+##XD
 def get_connection():
     return connect(**DB_CONFIG)
