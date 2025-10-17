@@ -4,20 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="ya se probo y corre sin problemas">
-      <change afterPath="$PROJECT_DIR$/extensions.py" afterDir="false" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se jodio todo marino XD">
+      <change afterPath="$PROJECT_DIR$/temples/desboard.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/temples/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/__init__.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/distribuidor_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/distribuidor_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/documento_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/documento_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/kardex_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/kardex_routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/login_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/login_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/movimiento_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/movimiento_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/persona_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/persona_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/producto_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/producto_routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/usuario_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/usuario_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/dashboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,8 +27,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -294,7 +294,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760725389162</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="se jodio todo marino XD">
+      <option name="closed" value="true" />
+      <created>1760731470437</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1760731470437</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,7 +337,8 @@
     <MESSAGE value="se elimino la carpeta" />
     <MESSAGE value="se empieza a reestructurar el archivo general" />
     <MESSAGE value="ya se probo y corre sin problemas" />
-    <option name="LAST_COMMIT_MESSAGE" value="ya se probo y corre sin problemas" />
+    <MESSAGE value="se jodio todo marino XD" />
+    <option name="LAST_COMMIT_MESSAGE" value="se jodio todo marino XD" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
