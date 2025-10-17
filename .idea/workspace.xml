@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se empieza a reestructurar el archivo general">
-      <change afterPath="$PROJECT_DIR$/routes/distribuidor_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/routes/producto_routes.py" afterDir="false" />
-    </list>
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se empieza a reestructurar el archivo general" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -250,7 +247,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760724562050</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="se empieza a reestructurar el archivo general">
+      <option name="closed" value="true" />
+      <created>1760724797632</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1760724797632</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
