@@ -4,21 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se modifico nuevamente el codigo para agrgar las tablas documento, movimiento y kardex. no hay problema para mostrar datos. se provara despues para editar agregar y borrar.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/login_usuario.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/menu_grafico.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_cliente.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_conexion.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_detalle_pedido.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_distribuidor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_empleado.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_menu.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_pedido.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_producto.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/movimiento de tablas/tabla_recibo.py" beforeDir="false" />
-    </list>
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se elimino la carpeta" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -245,7 +231,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760300328275</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="se elimino la carpeta">
+      <option name="closed" value="true" />
+      <created>1760723839199</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1760723839199</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -277,7 +271,8 @@
     <MESSAGE value="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato" />
     <MESSAGE value="se cambio varias partes del codigo y se volvio a configurar y se mejor la interfaz para si no usar tanto el postman" />
     <MESSAGE value="se modifico nuevamente el codigo para agrgar las tablas documento, movimiento y kardex. no hay problema para mostrar datos. se provara despues para editar agregar y borrar." />
-    <option name="LAST_COMMIT_MESSAGE" value="se modifico nuevamente el codigo para agrgar las tablas documento, movimiento y kardex. no hay problema para mostrar datos. se provara despues para editar agregar y borrar." />
+    <MESSAGE value="se elimino la carpeta" />
+    <option name="LAST_COMMIT_MESSAGE" value="se elimino la carpeta" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
