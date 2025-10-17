@@ -1,63 +1,60 @@
 from flask import Blueprint, request, jsonify
 from db import get_connection
-from psycopg2 import extras
+from extensions import bcrypt
 
-persona_bp = Blueprint('personas', __name__)
+bp = Blueprint('persona', __name__, url_prefix='/api')
 
-@persona_bp.route('/personas', methods=['GET'])
-def obtener_personas():
+@bp.route('/persona', methods=['GET'])
+def obtener_persona():
     conn = get_connection()
-    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
-    cur.execute("SELECT * FROM persona ORDER BY id_persona ASC;")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM persona ORDER BY id_persona;")
     data = cur.fetchall()
     cur.close()
     conn.close()
-    return jsonify(data)
+    return jsonify([{
+        "id_persona": p[0],
+        "nombre": p[1],
+        "apellido": p[2],
+        "correo": p[3],
+        "telefono": p[4]
+    } for p in data])
 
-@persona_bp.route('/personas', methods=['POST'])
+@bp.route('/persona', methods=['POST'])
 def agregar_persona():
     data = request.get_json()
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO persona (nombre, primer_apellido, segundo_apellido, telefono, correo)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING id_persona;
-    """, (
-        data['nombre'], data.get('primer_apellido'),
-        data.get('segundo_apellido'), data.get('telefono'), data.get('correo')
-    ))
+    cur.execute(
+        "INSERT INTO persona (nombre, apellido, correo, telefono) VALUES (%s,%s,%s,%s) RETURNING id_persona;",
+        (data['nombre'], data['apellido'], data.get('correo'), data.get('telefono'))
+    )
     id_nuevo = cur.fetchone()[0]
     conn.commit()
     cur.close()
     conn.close()
-    return jsonify({'mensaje': 'Persona agregada', 'id_persona': id_nuevo})
+    return jsonify({"mensaje": "Persona agregada", "id_persona": id_nuevo})
 
-@persona_bp.route('/personas/<int:id_persona>', methods=['PUT'])
+@bp.route('/persona/<int:id_persona>', methods=['PUT'])
 def actualizar_persona(id_persona):
     data = request.get_json()
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("""
-        UPDATE persona
-        SET nombre=%s, primer_apellido=%s, segundo_apellido=%s, telefono=%s, correo=%s
-        WHERE id_persona=%s;
-    """, (
-        data['nombre'], data.get('primer_apellido'),
-        data.get('segundo_apellido'), data.get('telefono'),
-        data.get('correo'), id_persona
-    ))
+    cur.execute(
+        "UPDATE persona SET nombre=%s, apellido=%s, correo=%s, telefono=%s WHERE id_persona=%s;",
+        (data['nombre'], data['apellido'], data.get('correo'), data.get('telefono'), id_persona)
+    )
     conn.commit()
     cur.close()
     conn.close()
-    return jsonify({'mensaje': 'Persona actualizada'})
+    return jsonify({"mensaje": "Persona actualizada"})
 
-@persona_bp.route('/personas/<int:id_persona>', methods=['DELETE'])
+@bp.route('/persona/<int:id_persona>', methods=['DELETE'])
 def eliminar_persona(id_persona):
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM persona WHERE id_persona = %s;", (id_persona,))
+    cur.execute("DELETE FROM persona WHERE id_persona=%s;", (id_persona,))
     conn.commit()
     cur.close()
     conn.close()
-    return jsonify({'mensaje': 'Persona eliminada'})
+    return jsonify({"mensaje": "Persona eliminada"})

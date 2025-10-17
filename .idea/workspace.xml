@@ -4,8 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se empieza a reestructurar el archivo general">
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="ya se probo y corre sin problemas">
+      <change afterPath="$PROJECT_DIR$/extensions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/distribuidor_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/distribuidor_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/documento_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/documento_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/kardex_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/kardex_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/login_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/login_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/movimiento_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/movimiento_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/persona_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/persona_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/producto_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/producto_routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/usuario_routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/usuario_routes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,12 +66,17 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.app.executor": "Run",
     "Python.db.executor": "Run",
+    "Python.distribuidor_routes.executor": "Run",
+    "Python.documento_routes.executor": "Run",
+    "Python.login_routes.executor": "Run",
     "Python.login_usuario.executor": "Run",
     "Python.main.executor": "Run",
     "Python.menu_grafico.executor": "Run",
+    "Python.persona_routes.executor": "Run",
     "Python.prueba.executor": "Run",
     "Python.tabla_cliente.executor": "Run",
     "Python.tabla_menu.executor": "Run",
+    "Python.usuario_routes.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -75,8 +92,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\movimiento de tablas" />
       <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario" />
+      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Backend\templates" />
+      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Backend\routes" />
+      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Frontend" />
+      <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Backend" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -266,7 +286,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760725340597</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="ya se probo y corre sin problemas">
+      <option name="closed" value="true" />
+      <created>1760725389162</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1760725389162</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -300,7 +328,8 @@
     <MESSAGE value="se modifico nuevamente el codigo para agrgar las tablas documento, movimiento y kardex. no hay problema para mostrar datos. se provara despues para editar agregar y borrar." />
     <MESSAGE value="se elimino la carpeta" />
     <MESSAGE value="se empieza a reestructurar el archivo general" />
-    <option name="LAST_COMMIT_MESSAGE" value="se empieza a reestructurar el archivo general" />
+    <MESSAGE value="ya se probo y corre sin problemas" />
+    <option name="LAST_COMMIT_MESSAGE" value="ya se probo y corre sin problemas" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

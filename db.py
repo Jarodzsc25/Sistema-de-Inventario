@@ -1,4 +1,4 @@
-from psycopg2 import connect, extras
+from psycopg2 import connect
 
 DB_CONFIG = {
     "host": "localhost",
