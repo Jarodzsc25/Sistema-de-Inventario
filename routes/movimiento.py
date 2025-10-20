@@ -1,14 +1,13 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 from datetime import datetime
+import sys
 
 movimiento_bp = Blueprint('movimiento_bp', __name__)
-
 
 # Función para obtener los campos de Movimiento
 def get_movimiento_fields(data):
     """Extrae y retorna los campos de movimiento de un diccionario."""
-    # Usamos datetime.now().isoformat() como default si 'fecha' no está
     fecha_default = datetime.now().isoformat()
     return (
         data.get('tipo'),
@@ -20,12 +19,11 @@ def get_movimiento_fields(data):
         data.get('id_documento')
     )
 
-
-# Obtener todos los movimientos y crear uno nuevo (GET y POST)
+# --- GET y POST ---
 @movimiento_bp.route('/', methods=['GET', 'POST'])
 def handle_movimientos():
     if request.method == 'POST':
-        # --- CREATE (Crear nuevo Movimiento) ---
+        # --- CREATE ---
         data = request.get_json()
         tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento = get_movimiento_fields(data)
 
@@ -44,41 +42,50 @@ def handle_movimientos():
         try:
             results = execute_query(sql, params, fetch=True)
             new_id = results[0]['id_movimiento'] if results else None
+            print(f"Movimiento creado: id_movimiento={new_id}, tipo={tipo}")
             return jsonify({
                 "mensaje": "Movimiento creado con éxito.",
-                "id_movimiento": new_id,
-                "tipo": tipo
+                "movimiento": {
+                    "id_movimiento": new_id,
+                    "tipo": tipo,
+                    "fecha": fecha,
+                    "glosa": glosa
+                }
             }), 201
         except Exception as e:
-            return jsonify({"error": "Error al crear movimiento. Verifica las FK (elaborador, cliente, documento).",
-                            "detalle": str(e)}), 400
+            print(f"Error en POST /api/movimiento/: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al crear movimiento. Verifica las FK (elaborador, cliente, documento).",
+                "detalle": str(e)
+            }), 400
 
     else:
-        # --- READ ALL (Obtener todos los Movimientos) ---
+        # --- READ ALL ---
         sql = "SELECT * FROM movimiento ORDER BY id_movimiento DESC"
         try:
             movimientos = execute_query(sql, fetch=True)
             return jsonify(movimientos), 200
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/movimiento/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de movimientos"}), 500
 
-
-# Obtener, actualizar o eliminar un Movimiento por ID (GET, PUT, DELETE)
+# --- GET, PUT, DELETE por id_movimiento ---
 @movimiento_bp.route('/<int:id_movimiento>', methods=['GET', 'PUT', 'DELETE'])
 def handle_movimiento(id_movimiento):
     if request.method == 'GET':
-        # --- READ ONE (Obtener un Movimiento) ---
+        # --- READ ONE ---
         sql = "SELECT * FROM movimiento WHERE id_movimiento = %s"
         try:
             movimiento = execute_query(sql, (id_movimiento,), fetch=True)
             if movimiento:
                 return jsonify(movimiento[0]), 200
             return jsonify({"error": "Movimiento no encontrado."}), 404
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/movimiento/{id_movimiento}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener movimiento"}), 500
 
     elif request.method == 'PUT':
-        # --- UPDATE (Actualizar Movimiento) ---
+        # --- UPDATE ---
         data = request.get_json()
         tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento = get_movimiento_fields(data)
 
@@ -98,20 +105,25 @@ def handle_movimiento(id_movimiento):
         try:
             row_count = execute_query(sql, params)
             if row_count > 0:
+                print(f"Movimiento actualizado: id_movimiento={id_movimiento}")
                 return jsonify({"mensaje": "Movimiento actualizado con éxito.", "id_movimiento": id_movimiento}), 200
             return jsonify({"error": "Movimiento no encontrado para actualizar."}), 404
         except Exception as e:
+            print(f"Error en PUT /api/movimiento/{id_movimiento}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al actualizar movimiento. Verifica las FK.", "detalle": str(e)}), 400
 
     elif request.method == 'DELETE':
-        # --- DELETE (Eliminar Movimiento) ---
+        # --- DELETE ---
         sql = "DELETE FROM movimiento WHERE id_movimiento = %s"
         try:
             row_count = execute_query(sql, (id_movimiento,))
             if row_count > 0:
-                # La eliminación del Movimiento en cascada eliminará las entradas de Kardex asociadas.
-                return jsonify({"mensaje": "Movimiento eliminado con éxito. Se eliminaron sus Kardex asociados.",
-                                "id_movimiento": id_movimiento}), 200
+                print(f"Movimiento eliminado: id_movimiento={id_movimiento}")
+                return jsonify({
+                    "mensaje": "Movimiento eliminado con éxito. Se eliminaron sus Kardex asociados.",
+                    "id_movimiento": id_movimiento
+                }), 200
             return jsonify({"error": "Movimiento no encontrado para eliminar."}), 404
         except Exception as e:
+            print(f"Error en DELETE /api/movimiento/{id_movimiento}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al eliminar movimiento.", "detalle": str(e)}), 400

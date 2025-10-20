@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
+import sys
 
 distribuidor_bp = Blueprint('distribuidor_bp', __name__)
 
-
-# Obtener todos los distribuidores y crear uno nuevo (GET y POST)
+# --- GET y POST ---
 @distribuidor_bp.route('/', methods=['GET', 'POST'])
 def handle_distribuidores():
     if request.method == 'POST':
-        # --- CREATE (Crear nuevo Distribuidor) ---
+        # --- CREATE ---
         data = request.get_json()
         nit = data.get('nit')
         nombre = data.get('nombre')
@@ -29,40 +29,46 @@ def handle_distribuidores():
         try:
             results = execute_query(sql, params, fetch=True)
             new_id = results[0]['id_distribuidor'] if results else None
+            print(f"Distribuidor creado: {nombre} (id_distribuidor={new_id})")
             return jsonify({
                 "mensaje": "Distribuidor creado con éxito.",
-                "id_distribuidor": new_id,
-                "nombre": nombre
+                "distribuidor": {
+                    "id_distribuidor": new_id,
+                    "nombre": nombre,
+                    "nit": nit
+                }
             }), 201
         except Exception as e:
+            print(f"Error en POST /api/distribuidor/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al crear distribuidor", "detalle": str(e)}), 400
 
     else:
-        # --- READ ALL (Obtener todos los Distribuidores) ---
+        # --- READ ALL ---
         sql = "SELECT * FROM distribuidor ORDER BY id_distribuidor"
         try:
             distribuidores = execute_query(sql, fetch=True)
             return jsonify(distribuidores), 200
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/distribuidor/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de distribuidores"}), 500
 
-
-# Obtener, actualizar o eliminar un Distribuidor por ID (GET, PUT, DELETE)
+# --- GET, PUT, DELETE por id_distribuidor ---
 @distribuidor_bp.route('/<int:id_distribuidor>', methods=['GET', 'PUT', 'DELETE'])
 def handle_distribuidor(id_distribuidor):
     if request.method == 'GET':
-        # --- READ ONE (Obtener un Distribuidor) ---
+        # --- READ ONE ---
         sql = "SELECT * FROM distribuidor WHERE id_distribuidor = %s"
         try:
             distribuidor = execute_query(sql, (id_distribuidor,), fetch=True)
             if distribuidor:
                 return jsonify(distribuidor[0]), 200
             return jsonify({"error": "Distribuidor no encontrado."}), 404
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/distribuidor/{id_distribuidor}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener distribuidor"}), 500
 
     elif request.method == 'PUT':
-        # --- UPDATE (Actualizar Distribuidor) ---
+        # --- UPDATE ---
         data = request.get_json()
         nit = data.get('nit')
         nombre = data.get('nombre')
@@ -84,22 +90,31 @@ def handle_distribuidor(id_distribuidor):
         try:
             row_count = execute_query(sql, params)
             if row_count > 0:
-                return jsonify(
-                    {"mensaje": "Distribuidor actualizado con éxito.", "id_distribuidor": id_distribuidor}), 200
+                print(f"Distribuidor actualizado: id_distribuidor={id_distribuidor}")
+                return jsonify({
+                    "mensaje": "Distribuidor actualizado con éxito.",
+                    "id_distribuidor": id_distribuidor
+                }), 200
             return jsonify({"error": "Distribuidor no encontrado para actualizar."}), 404
         except Exception as e:
+            print(f"Error en PUT /api/distribuidor/{id_distribuidor}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al actualizar distribuidor", "detalle": str(e)}), 400
 
     elif request.method == 'DELETE':
-        # --- DELETE (Eliminar Distribuidor) ---
+        # --- DELETE ---
         sql = "DELETE FROM distribuidor WHERE id_distribuidor = %s"
         try:
             row_count = execute_query(sql, (id_distribuidor,))
             if row_count > 0:
-                return jsonify(
-                    {"mensaje": "Distribuidor eliminado con éxito.", "id_distribuidor": id_distribuidor}), 200
+                print(f"Distribuidor eliminado: id_distribuidor={id_distribuidor}")
+                return jsonify({
+                    "mensaje": "Distribuidor eliminado con éxito.",
+                    "id_distribuidor": id_distribuidor
+                }), 200
             return jsonify({"error": "Distribuidor no encontrado para eliminar."}), 404
         except Exception as e:
-            # Restrict violation es común aquí (si hay productos asociados)
-            return jsonify({"error": "Error al eliminar distribuidor. Puede que tenga Productos asociados.",
-                            "detalle": str(e)}), 400
+            print(f"Error en DELETE /api/distribuidor/{id_distribuidor}: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al eliminar distribuidor. Puede que tenga productos asociados.",
+                "detalle": str(e)
+            }), 400

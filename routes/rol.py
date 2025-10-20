@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
+import sys  # Para logging detallado en consola
 
+# Blueprint para Rol
 rol_bp = Blueprint('rol_bp', __name__)
 
-
-# Obtener todos los roles y crear uno nuevo (GET y POST)
+# --- GET y POST ---
 @rol_bp.route('/', methods=['GET', 'POST'])
 def handle_roles():
     if request.method == 'POST':
@@ -15,18 +16,28 @@ def handle_roles():
         if not nombre:
             return jsonify({"error": "Falta el campo 'nombre'."}), 400
 
-        sql = "INSERT INTO rol (nombre) VALUES (%s) RETURNING id_rol"
+        sql = "INSERT INTO rol (nombre) VALUES (%s)"
+        params = (nombre,)
+
         try:
-            # La función execute_query está diseñada para lanzar excepciones en caso de error.
-            results = execute_query(sql, (nombre,), fetch=True)
-            new_id = results[0]['id_rol'] if results else None
+            # Ejecutar sin fetch para asegurar commit
+            execute_query(sql, params)
+
+            # Recuperar el rol recién creado (último insertado)
+            new_rol = execute_query(
+                "SELECT * FROM rol ORDER BY id_rol DESC LIMIT 1",
+                fetch=True
+            )[0]
+
+            print("Rol insertado correctamente:", new_rol)
+
             return jsonify({
                 "mensaje": "Rol creado con éxito.",
-                "id_rol": new_id,
-                "nombre": nombre
+                "rol": new_rol
             }), 201
+
         except Exception as e:
-            # La excepción se maneja globalmente en app.py, pero capturamos por seguridad
+            print(f"Error en POST /api/rol/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al crear rol", "detalle": str(e)}), 400
 
     else:
@@ -35,12 +46,12 @@ def handle_roles():
         try:
             roles = execute_query(sql, fetch=True)
             return jsonify(roles), 200
-        except Exception:
-            # Si hay un error, el manejador global lo captura
+        except Exception as e:
+            print(f"Error en GET /api/rol/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de roles"}), 500
 
 
-# Obtener, actualizar o eliminar un Rol por ID (GET, PUT, DELETE)
+# --- GET, PUT y DELETE por ID ---
 @rol_bp.route('/<int:id_rol>', methods=['GET', 'PUT', 'DELETE'])
 def handle_rol(id_rol):
     if request.method == 'GET':
@@ -51,7 +62,8 @@ def handle_rol(id_rol):
             if rol:
                 return jsonify(rol[0]), 200
             return jsonify({"error": "Rol no encontrado."}), 404
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/rol/{id_rol}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener rol"}), 500
 
     elif request.method == 'PUT':
@@ -63,12 +75,24 @@ def handle_rol(id_rol):
             return jsonify({"error": "Falta el campo 'nombre'."}), 400
 
         sql = "UPDATE rol SET nombre = %s WHERE id_rol = %s"
+        params = (nombre, id_rol)
+
         try:
-            row_count = execute_query(sql, (nombre, id_rol))
-            if row_count > 0:
-                return jsonify({"mensaje": "Rol actualizado con éxito.", "id_rol": id_rol, "nombre": nombre}), 200
+            row_count = execute_query(sql, params)
+            if row_count and row_count > 0:
+                updated_rol = execute_query(
+                    "SELECT * FROM rol WHERE id_rol = %s",
+                    (id_rol,),
+                    fetch=True
+                )[0]
+                print("Rol actualizado:", updated_rol)
+                return jsonify({
+                    "mensaje": "Rol actualizado con éxito.",
+                    "rol": updated_rol
+                }), 200
             return jsonify({"error": "Rol no encontrado para actualizar."}), 404
         except Exception as e:
+            print(f"Error en PUT /api/rol/{id_rol}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al actualizar rol", "detalle": str(e)}), 400
 
     elif request.method == 'DELETE':
@@ -76,10 +100,16 @@ def handle_rol(id_rol):
         sql = "DELETE FROM rol WHERE id_rol = %s"
         try:
             row_count = execute_query(sql, (id_rol,))
-            if row_count > 0:
-                return jsonify({"mensaje": "Rol eliminado con éxito.", "id_rol": id_rol}), 200
+            if row_count and row_count > 0:
+                print(f"Rol eliminado: id_rol={id_rol}")
+                return jsonify({
+                    "mensaje": "Rol eliminado con éxito.",
+                    "id_rol": id_rol
+                }), 200
             return jsonify({"error": "Rol no encontrado para eliminar."}), 404
         except Exception as e:
-            # Restrict violation es común aquí (si hay usuarios con este rol)
-            return jsonify({"error": "Error al eliminar rol. Puede que esté siendo utilizado por un Usuario.",
-                            "detalle": str(e)}), 400
+            print(f"Error en DELETE /api/rol/{id_rol}: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al eliminar rol. Puede estar asignado a un usuario.",
+                "detalle": str(e)
+            }), 400

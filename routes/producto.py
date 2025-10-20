@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
+import sys
 
 producto_bp = Blueprint('producto_bp', __name__)
 
-
-# Obtener todos los productos y crear uno nuevo (GET y POST)
+# --- GET y POST ---
 @producto_bp.route('/', methods=['GET', 'POST'])
 def handle_productos():
     if request.method == 'POST':
-        # --- CREATE (Crear nuevo Producto) ---
+        # --- CREATE ---
         data = request.get_json()
         codigo = data.get('codigo')
         nombre = data.get('nombre')
@@ -29,17 +29,25 @@ def handle_productos():
         try:
             results = execute_query(sql, params, fetch=True)
             new_id = results[0]['id_producto'] if results else None
+            print(f"Producto creado: {nombre} (id_producto={new_id})")
             return jsonify({
                 "mensaje": "Producto creado con éxito.",
-                "id_producto": new_id,
-                "nombre": nombre
+                "producto": {
+                    "id_producto": new_id,
+                    "nombre": nombre,
+                    "codigo": codigo,
+                    "id_distribuidor": id_distribuidor
+                }
             }), 201
         except Exception as e:
-            return jsonify(
-                {"error": "Error al crear producto. Verifica que el distribuidor exista.", "detalle": str(e)}), 400
+            print(f"Error en POST /api/producto/: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al crear producto. Verifica que el distribuidor exista.",
+                "detalle": str(e)
+            }), 400
 
     else:
-        # --- READ ALL (Obtener todos los Productos) ---
+        # --- READ ALL ---
         sql = """
             SELECT 
                 p.*, d.nombre AS distribuidor_nombre 
@@ -50,15 +58,15 @@ def handle_productos():
         try:
             productos = execute_query(sql, fetch=True)
             return jsonify(productos), 200
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/producto/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de productos"}), 500
 
-
-# Obtener, actualizar o eliminar un Producto por ID (GET, PUT, DELETE)
+# --- GET, PUT, DELETE por id_producto ---
 @producto_bp.route('/<int:id_producto>', methods=['GET', 'PUT', 'DELETE'])
 def handle_producto(id_producto):
     if request.method == 'GET':
-        # --- READ ONE (Obtener un Producto) ---
+        # --- READ ONE ---
         sql = """
             SELECT 
                 p.*, d.nombre AS distribuidor_nombre 
@@ -71,11 +79,12 @@ def handle_producto(id_producto):
             if producto:
                 return jsonify(producto[0]), 200
             return jsonify({"error": "Producto no encontrado."}), 404
-        except Exception:
+        except Exception as e:
+            print(f"Error en GET /api/producto/{id_producto}: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener producto"}), 500
 
     elif request.method == 'PUT':
-        # --- UPDATE (Actualizar Producto) ---
+        # --- UPDATE ---
         data = request.get_json()
         codigo = data.get('codigo')
         nombre = data.get('nombre')
@@ -97,21 +106,28 @@ def handle_producto(id_producto):
         try:
             row_count = execute_query(sql, params)
             if row_count > 0:
+                print(f"Producto actualizado: id_producto={id_producto}")
                 return jsonify({"mensaje": "Producto actualizado con éxito.", "id_producto": id_producto}), 200
             return jsonify({"error": "Producto no encontrado para actualizar."}), 404
         except Exception as e:
-            return jsonify(
-                {"error": "Error al actualizar producto. Verifica que el distribuidor exista.", "detalle": str(e)}), 400
+            print(f"Error en PUT /api/producto/{id_producto}: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al actualizar producto. Verifica que el distribuidor exista.",
+                "detalle": str(e)
+            }), 400
 
     elif request.method == 'DELETE':
-        # --- DELETE (Eliminar Producto) ---
+        # --- DELETE ---
         sql = "DELETE FROM producto WHERE id_producto = %s"
         try:
             row_count = execute_query(sql, (id_producto,))
             if row_count > 0:
+                print(f"Producto eliminado: id_producto={id_producto}")
                 return jsonify({"mensaje": "Producto eliminado con éxito.", "id_producto": id_producto}), 200
             return jsonify({"error": "Producto no encontrado para eliminar."}), 404
         except Exception as e:
-            # Si hay registros de Kardex asociados, esto fallará.
-            return jsonify(
-                {"error": "Error al eliminar producto. Puede tener movimientos en Kardex.", "detalle": str(e)}), 400
+            print(f"Error en DELETE /api/producto/{id_producto}: {e}", file=sys.stderr)
+            return jsonify({
+                "error": "Error al eliminar producto. Puede tener movimientos en Kardex.",
+                "detalle": str(e)
+            }), 400
