@@ -57,3 +57,4 @@ def execute_query(sql, params=None, fetch=False):
                 print(f"Error en la consulta SQL: {e}")
                 # Re-lanzar la excepción para que Flask la maneje
                 raise
+

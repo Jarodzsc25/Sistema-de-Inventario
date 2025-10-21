@@ -12,6 +12,12 @@ from routes.documento import documento_bp
 from routes.movimiento import movimiento_bp
 from routes.kardex import kardex_bp
 
+from flask import Flask
+
+
+app = Flask(__name__)
+app.register_blueprint(rol_bp, url_prefix='/rol')
+
 app = Flask(__name__)
 
 # Configuración (opcional, para modo debug)
