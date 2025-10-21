@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se jodio todo tuve que reacer todo jaja odio esta mrd">
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se jodio todo pero almenos se arreglo, algo .">
+      <change afterPath="$PROJECT_DIR$/openapi.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/distribuidor.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/distribuidor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/documento.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/documento.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/kardex.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/kardex.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/persona.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/producto.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/producto.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/rol.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/rol.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/usuario.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/usuario.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +18,7 @@
       <list>
         <option value="HTML File" />
         <option value="Python Script" />
+        <option value="OpenAPI" />
       </list>
     </option>
   </component>
@@ -59,6 +54,7 @@
     "DefaultHtmlFileTemplate": "HTML File",
     "JavaScript Debug.dashboard.html.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "OpenAPI/Swagger Code Generator.openapi.yaml.executor": "Run",
     "Python.app.executor": "Run",
     "Python.db.executor": "Run",
     "Python.db_conector.executor": "Run",
@@ -100,6 +96,25 @@
       <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Frontend" />
       <recent name="C:\Users\Jarod\PycharmProjects\Sistema de inventario\Backend" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="openapi.yaml" type="SwaggerCodegen" editBeforeRun="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="customTemplatesPath" value="" />
+      <option name="generateToPath" value="C:\Users\Jarod\gen" />
+      <option name="generationParameters">
+        <list />
+      </option>
+      <option name="generatorType" value="OPENAPI_GENERATOR_V7" />
+      <option name="jdkPath" value="C:\Program Files\JetBrains\PyCharm 2025.2.1.1\jbr\bin\java.exe" />
+      <option name="language" value="python" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <option name="specificationPath" value="C:\Users\Jarod\PycharmProjects\Sistema de inventario\openapi.yaml" />
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -328,7 +343,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760821930527</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="se jodio todo pero almenos se arreglo, algo .">
+      <option name="closed" value="true" />
+      <created>1760990127707</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1760990127707</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -366,7 +389,8 @@
     <MESSAGE value="se jodio todo marino XD" />
     <MESSAGE value="se jodio todo marino XD, tuve que usar git para reponer mi fallo de la vrg" />
     <MESSAGE value="se jodio todo tuve que reacer todo jaja odio esta mrd" />
-    <option name="LAST_COMMIT_MESSAGE" value="se jodio todo tuve que reacer todo jaja odio esta mrd" />
+    <MESSAGE value="se jodio todo pero almenos se arreglo, algo ." />
+    <option name="LAST_COMMIT_MESSAGE" value="se jodio todo pero almenos se arreglo, algo ." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
