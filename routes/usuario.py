@@ -11,7 +11,7 @@ def hash_password(password):
     return base64.b64encode(password.encode()).decode()
 
 # --- GET y POST ---
-@usuario_bp.route('/', methods=['GET', 'POST'])
+@usuario_bp.route('', methods=['GET', 'POST'])
 def handle_usuarios():
     if request.method == 'POST':
         # --- CREATE (Crear Usuario) ---

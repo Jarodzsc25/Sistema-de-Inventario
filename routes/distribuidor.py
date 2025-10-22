@@ -5,7 +5,7 @@ import sys
 distribuidor_bp = Blueprint('distribuidor_bp', __name__)
 
 # --- GET y POST ---
-@distribuidor_bp.route('/', methods=['GET', 'POST'])
+@distribuidor_bp.route('', methods=['GET', 'POST'])
 def handle_distribuidores():
     if request.method == 'POST':
         # --- CREATE ---
@@ -20,8 +20,8 @@ def handle_distribuidores():
             return jsonify({"error": "Faltan campos obligatorios: nit, nombre."}), 400
 
         sql = """
-            INSERT INTO distribuidor (nit, nombre, contacto, telefono, direccion) 
-            VALUES (%s, %s, %s, %s, %s) 
+            INSERT INTO distribuidor (nit, nombre, contacto, telefono, direccion)
+            VALUES (%s, %s, %s, %s, %s)
             RETURNING id_distribuidor
         """
         params = (nit, nombre, contacto, telefono, direccion)
@@ -35,7 +35,10 @@ def handle_distribuidores():
                 "distribuidor": {
                     "id_distribuidor": new_id,
                     "nombre": nombre,
-                    "nit": nit
+                    "nit": nit,
+                    "contacto": contacto,
+                    "telefono": telefono,
+                    "direccion": direccion
                 }
             }), 201
         except Exception as e:
@@ -51,6 +54,7 @@ def handle_distribuidores():
         except Exception as e:
             print(f"Error en GET /api/distribuidor/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de distribuidores"}), 500
+
 
 # --- GET, PUT, DELETE por id_distribuidor ---
 @distribuidor_bp.route('/<int:id_distribuidor>', methods=['GET', 'PUT', 'DELETE'])
