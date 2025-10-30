@@ -1,8 +1,7 @@
-from flask import Flask, jsonify
+# backend/app.py
+from flask import Flask, jsonify, request
 from psycopg2 import OperationalError, DatabaseError
-from db_config import execute_query # Importamos la utilidad de conexión
-
-# Importar Blueprints de Rutas
+from db_config import execute_query
 from routes.rol import rol_bp
 from routes.persona import persona_bp
 from routes.usuario import usuario_bp
@@ -11,19 +10,18 @@ from routes.producto import producto_bp
 from routes.documento import documento_bp
 from routes.movimiento import movimiento_bp
 from routes.kardex import kardex_bp
-
-from flask import Flask
-
+import base64
 
 app = Flask(__name__)
-app.register_blueprint(rol_bp, url_prefix='/rol')
-
-app = Flask(__name__)
-
-# Configuración (opcional, para modo debug)
 app.config['DEBUG'] = True
 
-# --- Registro de Blueprints de Rutas ---
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+
+# Registrar Blueprints
 app.register_blueprint(rol_bp, url_prefix='/api/rol')
 app.register_blueprint(persona_bp, url_prefix='/api/persona')
 app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
@@ -34,35 +32,51 @@ app.register_blueprint(movimiento_bp, url_prefix='/api/movimiento')
 app.register_blueprint(kardex_bp, url_prefix='/api/kardex')
 
 
-# --- Manejadores de Errores Globales ---
-@app.errorhandler(404)
-def resource_not_found(e):
-    """Manejador para errores 404 (Not Found)."""
-    return jsonify({"error": "Recurso no encontrado", "mensaje": str(e)}), 404
+# --- NUEVA RUTA DE LOGIN ---
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
-@app.errorhandler(OperationalError)
-def db_connection_error(e):
-    """Manejador para errores de conexión a la BD."""
-    return jsonify({"error": "Error de conexión a la BD", "mensaje": "Verifica las credenciales o el estado de PostgreSQL."}), 503
+    if not username or not password:
+        return jsonify({"error": "Usuario y contraseña requeridos"}), 400
 
-@app.errorhandler(DatabaseError)
-def db_operation_error(e):
-    """Manejador para errores de SQL (ej. violación de FK, dato nulo)."""
-    return jsonify({"error": "Error de base de datos", "mensaje": str(e).split('\n')[0]}), 400
+    try:
+        sql = """
+            SELECT 
+                u.id_usuario, u.username, u.password, r.nombre AS rol_nombre
+            FROM usuario u
+            JOIN rol r ON u.id_rol = r.id_rol
+            WHERE u.username = %s
+        """
+        user = execute_query(sql, (username,), fetch=True)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
 
-@app.errorhandler(Exception)
-def internal_server_error(e):
-    """Manejador genérico para errores internos."""
-    app.logger.error(f"Error inesperado: {e}")
-    return jsonify({"error": "Error interno del servidor", "mensaje": "Algo salió mal. Consulta los logs."}), 500
+        user = user[0]
+        encoded_pass = base64.b64encode(password.encode()).decode()
+        if encoded_pass != user['password']:
+            return jsonify({"error": "Contraseña incorrecta"}), 401
+
+        # Login exitoso
+        return jsonify({
+            "mensaje": "Login exitoso",
+            "usuario": {
+                "id_usuario": user['id_usuario'],
+                "username": user['username'],
+                "rol_nombre": user['rol_nombre']
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": "Error en login", "detalle": str(e)}), 500
 
 
-# Ruta de Bienvenida
 @app.route('/')
 def home():
-    """Ruta de inicio para verificar que la API está funcionando."""
-    return jsonify({"mensaje": "API del Sistema de Ventas en funcionamiento.", "version": "1.0"})
+    return jsonify({"mensaje": "API del Sistema de Ventas en funcionamiento", "version": "2.0"})
+
 
 if __name__ == '__main__':
-    # Ejecuta la aplicación en el puerto 5000 por defecto
     app.run(host='0.0.0.0', port=5000)

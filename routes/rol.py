@@ -5,6 +5,7 @@ import sys  # Para logging detallado en consola
 # Blueprint para Rol
 rol_bp = Blueprint('rol_bp', __name__)
 
+
 # --- GET y POST ---
 @rol_bp.route('/', methods=['GET', 'POST'])
 def handle_roles():

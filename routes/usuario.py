@@ -3,6 +3,8 @@ from db_config import execute_query
 import base64
 import sys  # Para logging de errores en consola
 
+
+
 usuario_bp = Blueprint('usuario_bp', __name__)
 
 # --- Función de hash (solo ejemplo, en producción usar bcrypt/passlib) ---
@@ -11,7 +13,7 @@ def hash_password(password):
     return base64.b64encode(password.encode()).decode()
 
 # --- GET y POST ---
-@usuario_bp.route('', methods=['GET', 'POST'])
+@usuario_bp.route('/', methods=['GET', 'POST'])
 def handle_usuarios():
     if request.method == 'POST':
         # --- CREATE (Crear Usuario) ---
