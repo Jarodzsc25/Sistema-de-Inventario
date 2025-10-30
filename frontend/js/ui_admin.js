@@ -62,57 +62,72 @@ async function mostrarFormularioUsuario(usuario = null, roles) {
   content.innerHTML = `
     <h4>${usuario ? "Editar Usuario" : "Nuevo Usuario"}</h4>
     <form id="formUsuario" class="mt-3">
-      <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" value="${
-          usuario?.username || ""
-        }" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Contraseña ${
-          usuario ? "(dejar en blanco si no cambia)" : ""
-        }</label>
-        <input type="password" class="form-control" id="password">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Rol</label>
-        <select class="form-select" id="idRol" required>
-          <option value="">Seleccione un rol</option>
-          ${roles
-            .map(
-              (r) =>
-                `<option value="${r.id_rol}" ${
-                  usuario?.rol_nombre === r.nombre ? "selected" : ""
-                }>${r.nombre}</option>`
-            )
-            .join("")}
-        </select>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">ID Persona</label>
-        <input type="number" class="form-control" id="idPersona" placeholder="Ingrese ID de persona existente" value="${
-          usuario?.id_usuario || ""
-        }" required>
-      </div>
-      <button type="submit" class="btn btn-primary">${
+      <fieldset>
+        <legend class="h6">Datos de Usuario</legend>
+
+        <div class="mb-3">
+          <label class="form-label">ID Persona (¡Debe existir en la BD!)</label>
+          <input type="number" class="form-control" id="idUsuario" placeholder="Ingrese el ID de la persona existente" value="${
+            usuario?.id_usuario || ""
+          }" required ${usuario ? 'readonly' : ''}>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" value="${
+            usuario?.username || ""
+          }" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Contraseña ${
+            usuario ? "(dejar en blanco si no cambia)" : ""
+          }</label>
+          <input type="password" class="form-control" id="password">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Rol</label>
+          <select class="form-select" id="idRol" required>
+            <option value="">Seleccione un rol</option>
+            ${roles
+              .map(
+                (r) =>
+                  `<option value="${r.id_rol}" ${
+                    usuario?.rol_nombre === r.nombre ? "selected" : ""
+                  }>${r.nombre}</option>`
+              )
+              .join("")}
+          </select>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn-primary mt-3">${
         usuario ? "Guardar Cambios" : "Crear Usuario"
       }</button>
-      <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+      <button type="button" class="btn btn-secondary mt-3" id="btnCancelar">Cancelar</button>
     </form>
   `;
   document.getElementById("btnCancelar").addEventListener("click", () => {
     document.getElementById("menuUsuarios").click();
   });
+
   document.getElementById("formUsuario").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // Recolección de datos que coincide con tu API de Postman
     const data = {
+      // Usamos idUsuario en el HTML, pero el backend lo espera como id_usuario
+      id_usuario: document.getElementById("idUsuario").value,
       username: document.getElementById("username").value.trim(),
       password: document.getElementById("password").value.trim(),
-      id_rol: document.getElementById("idRol").value,
-      id_persona: document.getElementById("idPersona").value,
+      id_rol: document.getElementById("idRol").value
     };
 
+    // La API de creación de usuario (POST) en tu backend espera estos 4 campos.
+
     if (usuario) {
+      // Para editar, pasamos el ID de usuario y los datos
       await updateUsuario(usuario.id_usuario, data);
       alert("Usuario actualizado");
     } else {
