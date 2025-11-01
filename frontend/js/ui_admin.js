@@ -312,3 +312,287 @@ async function mostrarFormularioPersona(persona = null) {
     document.getElementById("menuPersonas").click(); // Recargar la lista
   });
 }
+// =====================================
+// === GESTIÓN DE DISTRIBUIDORES (CRUD) ===
+// =====================================
+
+document.getElementById("menuDistribuidores")?.addEventListener("click", async () => {
+  const distribuidores = await getDistribuidores();
+
+  let html = `
+    <div class="d-flex justify-content-between align-items-center">
+      <h4>Gestión de Distribuidores</h4>
+      <button class="btn btn-success btn-sm" id="btnNuevoDistribuidor">+ Nuevo Distribuidor</button>
+    </div>
+
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>NIT</th>
+          <th>Nombre</th>
+          <th>Contacto</th>
+          <th>Teléfono</th>
+          <th>Dirección</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${distribuidores.map(d => `
+          <tr>
+            <td>${d.id_distribuidor}</td>
+            <td>${d.nit || ''}</td>
+            <td>${d.nombre || ''}</td>
+            <td>${d.contacto || ''}</td>
+            <td>${d.telefono || ''}</td>
+            <td>${d.direccion || ''}</td>
+            <td>
+              <button class="btn btn-primary btn-sm btn-edit-dist" data-id="${d.id_distribuidor}">Editar</button>
+              <button class="btn btn-danger btn-sm btn-del-dist" data-id="${d.id_distribuidor}">Eliminar</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById("contentArea").innerHTML = html;
+
+  // NUEVO DISTRIBUIDOR
+  document.getElementById("btnNuevoDistribuidor").addEventListener("click", () =>
+    mostrarFormularioDistribuidor(null)
+  );
+
+  // EDITAR DISTRIBUIDOR
+  document.querySelectorAll(".btn-edit-dist").forEach(btn =>
+    btn.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      const distribuidor = distribuidores.find(d => d.id_distribuidor == id);
+      mostrarFormularioDistribuidor(distribuidor);
+    })
+  );
+
+  // ELIMINAR DISTRIBUIDOR
+  document.querySelectorAll(".btn-del-dist").forEach(btn =>
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("¿Seguro que deseas eliminar este distribuidor?")) {
+        await deleteDistribuidor(id);
+        alert("Distribuidor eliminado");
+        document.getElementById("menuDistribuidores").click();
+      }
+    })
+  );
+});
+
+// === Formulario para crear o editar distribuidor ===
+async function mostrarFormularioDistribuidor(distribuidor = null) {
+  const content = document.getElementById("contentArea");
+  content.innerHTML = `
+    <h4>${distribuidor ? "Editar Distribuidor" : "Nuevo Distribuidor"}</h4>
+    <form id="formDistribuidor" class="mt-3">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label">NIT</label>
+          <input type="number" class="form-control" id="nitDist" value="${distribuidor?.nit || ""}" required>
+        </div>
+        <div class="col-md-8 mb-3">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombreDist" value="${distribuidor?.nombre || ""}" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Contacto</label>
+          <input type="text" class="form-control" id="contactoDist" value="${distribuidor?.contacto || ""}">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Teléfono</label>
+          <input type="text" class="form-control" id="telefonoDist" value="${distribuidor?.telefono || ""}">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Dirección</label>
+        <input type="text" class="form-control" id="direccionDist" value="${distribuidor?.direccion || ""}">
+      </div>
+
+      <button type="submit" class="btn btn-primary">${distribuidor ? "Guardar Cambios" : "Crear Distribuidor"}</button>
+      <button type="button" class="btn btn-secondary" id="btnCancelarDistribuidor">Cancelar</button>
+    </form>
+  `;
+
+  document.getElementById("btnCancelarDistribuidor").addEventListener("click", () => {
+    document.getElementById("menuDistribuidores").click();
+  });
+
+  document.getElementById("formDistribuidor").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      nit: parseInt(document.getElementById("nitDist").value, 10),
+      nombre: document.getElementById("nombreDist").value.trim(),
+      contacto: document.getElementById("contactoDist").value.trim(),
+      telefono: document.getElementById("telefonoDist").value.trim(),
+      direccion: document.getElementById("direccionDist").value.trim(),
+    };
+
+    if (!data.nit || !data.nombre) {
+      alert("El NIT y el nombre son obligatorios");
+      return;
+    }
+
+    if (distribuidor) {
+      await updateDistribuidor(distribuidor.id_distribuidor, data);
+      alert("Distribuidor actualizado correctamente");
+    } else {
+      await createDistribuidor(data);
+      alert("Distribuidor creado correctamente");
+    }
+
+    document.getElementById("menuDistribuidores").click();
+  });
+}
+// =====================================
+// === GESTIÓN DE PRODUCTOS (CRUD) ===
+// =====================================
+
+document.getElementById("menuProductos")?.addEventListener("click", async () => {
+  const productos = await getProductos();
+  const distribuidores = await getDistribuidores(); // Para seleccionar distribuidor al crear/editar
+
+  let html = `
+    <div class="d-flex justify-content-between align-items-center">
+      <h4>Gestión de Productos</h4>
+      <button class="btn btn-success btn-sm" id="btnNuevoProducto">+ Nuevo Producto</button>
+    </div>
+
+    <table class="table table-striped mt-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Unidad</th>
+          <th>Distribuidor</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${productos.map(p => `
+          <tr>
+            <td>${p.id_producto}</td>
+            <td>${p.codigo || ''}</td>
+            <td>${p.nombre || ''}</td>
+            <td>${p.descripcion || ''}</td>
+            <td>${p.unidad || ''}</td>
+            <td>${p.distribuidor_nombre || ''}</td>
+            <td>
+              <button class="btn btn-primary btn-sm btn-edit-prod" data-id="${p.id_producto}">Editar</button>
+              <button class="btn btn-danger btn-sm btn-del-prod" data-id="${p.id_producto}">Eliminar</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById("contentArea").innerHTML = html;
+
+  // NUEVO PRODUCTO
+  document.getElementById("btnNuevoProducto").addEventListener("click", () =>
+    mostrarFormularioProducto(null, distribuidores)
+  );
+
+  // EDITAR PRODUCTO
+  document.querySelectorAll(".btn-edit-prod").forEach(btn =>
+    btn.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      const producto = productos.find(p => p.id_producto == id);
+      mostrarFormularioProducto(producto, distribuidores);
+    })
+  );
+
+  // ELIMINAR PRODUCTO
+  document.querySelectorAll(".btn-del-prod").forEach(btn =>
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.dataset.id;
+      if (confirm("¿Seguro que deseas eliminar este producto?")) {
+        await deleteProducto(id);
+        alert("Producto eliminado");
+        document.getElementById("menuProductos").click();
+      }
+    })
+  );
+});
+
+// === Formulario para crear o editar producto ===
+async function mostrarFormularioProducto(producto = null, distribuidores = []) {
+  const content = document.getElementById("contentArea");
+  content.innerHTML = `
+    <h4>${producto ? "Editar Producto" : "Nuevo Producto"}</h4>
+    <form id="formProducto" class="mt-3">
+      <div class="mb-3">
+        <label class="form-label">Código</label>
+        <input type="text" class="form-control" id="codigoProd" value="${producto?.codigo || ""}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombreProd" value="${producto?.nombre || ""}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Descripción</label>
+        <input type="text" class="form-control" id="descripcionProd" value="${producto?.descripcion || ""}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Unidad</label>
+        <input type="text" class="form-control" id="unidadProd" value="${producto?.unidad || ""}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Distribuidor</label>
+        <select class="form-select" id="distribuidorProd" required>
+          <option value="">Seleccione un distribuidor</option>
+          ${distribuidores.map(d => `
+            <option value="${d.id_distribuidor}" ${producto?.id_distribuidor === d.id_distribuidor ? "selected" : ""}>${d.nombre}</option>
+          `).join("")}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">${producto ? "Guardar Cambios" : "Crear Producto"}</button>
+      <button type="button" class="btn btn-secondary" id="btnCancelarProducto">Cancelar</button>
+    </form>
+  `;
+
+  document.getElementById("btnCancelarProducto").addEventListener("click", () => {
+    document.getElementById("menuProductos").click();
+  });
+
+  document.getElementById("formProducto").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      codigo: document.getElementById("codigoProd").value.trim(),
+      nombre: document.getElementById("nombreProd").value.trim(),
+      descripcion: document.getElementById("descripcionProd").value.trim(),
+      unidad: document.getElementById("unidadProd").value.trim(),
+      id_distribuidor: parseInt(document.getElementById("distribuidorProd").value, 10),
+    };
+
+    if (!data.codigo || !data.nombre || !data.id_distribuidor) {
+      alert("Código, Nombre y Distribuidor son obligatorios");
+      return;
+    }
+
+    if (producto) {
+      await updateProducto(producto.id_producto, data);
+      alert("Producto actualizado correctamente");
+    } else {
+      await createProducto(data);
+      alert("Producto creado correctamente");
+    }
+
+    document.getElementById("menuProductos").click();
+  });
+}

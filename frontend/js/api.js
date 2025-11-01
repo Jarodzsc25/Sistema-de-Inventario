@@ -116,3 +116,59 @@ async function deletePersona(id) {
   });
   return res.json();
 }
+// ======================================
+// === API DISTRIBUIDORES (CRUD NUEVO) ===
+// ======================================
+
+
+async function createDistribuidor(data) {
+  const res = await fetch(`${API_BASE}/distribuidor`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+async function updateDistribuidor(id, data) {
+  const res = await fetch(`${API_BASE}/distribuidor/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+async function deleteDistribuidor(id) {
+  const res = await fetch(`${API_BASE}/distribuidor/${id}`, {
+    method: "DELETE",
+  });
+  return res.json();
+}
+// === PRODUCTOS ===
+
+
+async function createProducto(data) {
+  const res = await fetch(`${API_BASE}/producto/`, { // POST a /api/producto
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+async function updateProducto(id, data) {
+  const res = await fetch(`${API_BASE}/producto/${id}`, { // PUT a /api/producto/<id>
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+async function deleteProducto(id) {
+  const res = await fetch(`${API_BASE}/producto/${id}`, { // DELETE a /api/producto/<id>
+    method: "DELETE",
+  });
+  return res.json();
+}

@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="tratando de acer correr el frontend (quiero llorar llevo 6 dias sufriendo con esto)">
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="ptm ya se pudo solucionar lo de crear persona y usuario en el frontend jajajajajajajaja">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/api.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/js/ui_admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -394,7 +395,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761848434156</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="ptm ya se pudo solucionar lo de crear persona y usuario en el frontend jajajajajajajaja">
+      <option name="closed" value="true" />
+      <created>1761851736260</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1761851736260</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -412,7 +421,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="guardar conexion" />
     <MESSAGE value="guardar menu para conexion" />
     <MESSAGE value="corrigiendo errores" />
     <MESSAGE value="se reestructuro el codigo ya que al agregar la funcion de listar datos me genero datos y fallos de conexion nulos. advertencia." />
@@ -437,7 +445,8 @@
     <MESSAGE value="intento 1 de test y tengo problemas feos pero se completo el test de solo rol" />
     <MESSAGE value="se corrigieron los bug que me surgieron al momento de hacer pruebas" />
     <MESSAGE value="tratando de acer correr el frontend (quiero llorar llevo 6 dias sufriendo con esto)" />
-    <option name="LAST_COMMIT_MESSAGE" value="tratando de acer correr el frontend (quiero llorar llevo 6 dias sufriendo con esto)" />
+    <MESSAGE value="ptm ya se pudo solucionar lo de crear persona y usuario en el frontend jajajajajajajaja" />
+    <option name="LAST_COMMIT_MESSAGE" value="ptm ya se pudo solucionar lo de crear persona y usuario en el frontend jajajajajajajaja" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

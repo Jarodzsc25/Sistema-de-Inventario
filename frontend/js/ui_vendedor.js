@@ -14,15 +14,6 @@ document.getElementById("menuProductos")?.addEventListener("click", async () => 
   document.getElementById("contentArea").innerHTML = html;
 });
 
-document.getElementById("menuDistribuidores")?.addEventListener("click", async () => {
-  const dist = await getDistribuidores();
-  const html = `
-    <h4>Lista de Distribuidores</h4>
-    <ul class="list-group">${dist
-      .map((d) => `<li class="list-group-item">${d.nombre} (${d.nit})</li>`)
-      .join("")}</ul>`;
-  document.getElementById("contentArea").innerHTML = html;
-});
 
 document.getElementById("menuMovimientos")?.addEventListener("click", async () => {
   const movs = await getMovimientos();
