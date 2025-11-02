@@ -73,6 +73,19 @@ CREATE TABLE documento (
 );
 
 -- ============================================
+-- TABLA: persona → cliente (NUEVA)
+-- ============================================
+CREATE TABLE cliente (
+    id_cliente SERIAL PRIMARY KEY,
+    id_persona INT UNIQUE NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    observaciones TEXT,
+    CONSTRAINT fk_cliente_persona FOREIGN KEY (id_persona)
+        REFERENCES persona (id_persona)
+        ON DELETE CASCADE
+);
+
+-- ============================================
 -- TABLA: movimiento
 -- ============================================
 CREATE TABLE movimiento (
@@ -82,9 +95,10 @@ CREATE TABLE movimiento (
     glosa VARCHAR(150),
     observacion TEXT,
     id_elaborador INT REFERENCES usuario (id_usuario) ON DELETE SET NULL,
-    id_cliente INT REFERENCES persona (id_persona) ON DELETE SET NULL,
+    id_cliente INT REFERENCES cliente (id_cliente) ON DELETE SET NULL,
     id_documento INT REFERENCES documento (id_documento) ON DELETE SET NULL
 );
+
 
 -- ============================================
 -- TABLA: kardex
@@ -102,6 +116,11 @@ CREATE TABLE kardex (
 
 
 de dbdiagram.io
+
+Table rol {
+  id_rol int [pk, increment]
+  nombre varchar(100)
+}
 
 Table persona {
   id_persona int [pk, increment]
@@ -122,11 +141,6 @@ Table usuario {
   id_rol int [not null, ref: > rol.id_rol]
 }
 
-Table rol {
-  id_rol int [pk, increment]
-  nombre varchar(100)
-}
-
 Table distribuidor {
   id_distribuidor int [pk, increment]
   nit int
@@ -145,6 +159,19 @@ Table producto {
   id_distribuidor int [not null, ref: > distribuidor.id_distribuidor]
 }
 
+Table documento {
+  id_documento int [pk, increment]
+  numero int
+  fecha datetime
+}
+
+Table cliente {
+  id_cliente int [pk, increment]
+  id_persona int [unique, not null, ref: > persona.id_persona]
+  fecha_registro datetime
+  observaciones text
+}
+
 Table movimiento {
   id_movimiento int [pk, increment]
   tipo char
@@ -152,7 +179,7 @@ Table movimiento {
   glosa varchar(150)
   observacion text
   id_elaborador int [ref: > usuario.id_usuario]
-  id_cliente int [ref: > persona.id_persona]
+  id_cliente int [ref: > cliente.id_cliente]
   id_documento int [ref: > documento.id_documento]
 }
 
@@ -162,10 +189,4 @@ Table kardex {
   cantidad numeric(34,15)
   unitario numeric(34,15)
   suttotal numeric(34,15)
-}
-
-Table documento {
-  id_documento int [pk, increment]
-  numero int
-  fecha datetime
 }
