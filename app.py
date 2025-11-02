@@ -10,6 +10,7 @@ from routes.producto import producto_bp
 from routes.documento import documento_bp
 from routes.movimiento import movimiento_bp
 from routes.kardex import kardex_bp
+from routes.cliente import cliente_bp
 import base64
 
 app = Flask(__name__)
@@ -21,6 +22,8 @@ app = Flask(__name__)
 CORS(app)
 
 
+
+
 # Registrar Blueprints
 app.register_blueprint(rol_bp, url_prefix='/api/rol')
 app.register_blueprint(persona_bp, url_prefix='/api/persona')
@@ -30,7 +33,7 @@ app.register_blueprint(producto_bp, url_prefix='/api/producto')
 app.register_blueprint(documento_bp, url_prefix='/api/documento')
 app.register_blueprint(movimiento_bp, url_prefix='/api/movimiento')
 app.register_blueprint(kardex_bp, url_prefix='/api/kardex')
-
+app.register_blueprint(cliente_bp, url_prefix='/api/cliente')
 
 # --- NUEVA RUTA DE LOGIN ---
 @app.route('/api/login', methods=['POST'])
