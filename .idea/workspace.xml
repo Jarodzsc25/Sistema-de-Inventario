@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se volvio a configurar el openapi.yaml">
-      <change afterPath="$PROJECT_DIR$/OpenApi.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openapi.yaml" beforeDir="false" />
-    </list>
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se volvio a configurar el openapi.yaml" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -449,7 +446,31 @@
       <option name="project" value="LOCAL" />
       <updated>1762179014090</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="se volvio a configurar el openapi.yaml">
+      <option name="closed" value="true" />
+      <created>1762179197105</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1762179197105</updated>
+    </task>
+    <task id="LOCAL-00040" summary="se volvio a configurar el openapi.yaml">
+      <option name="closed" value="true" />
+      <created>1762179347345</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1762179347345</updated>
+    </task>
+    <task id="LOCAL-00041" summary="se volvio a configurar el openapi.yaml">
+      <option name="closed" value="true" />
+      <created>1762179414627</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1762179414627</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
