@@ -38,10 +38,13 @@ async function handleLogin(e) {
         // Asumiendo que loginUser existe en api.js
         const responseData = await loginUser(username, password);
 
-        // Verifica si la API retornó un usuario válido
-        if (responseData && responseData.usuario) {
-            // **CLAVE:** Guarda el objeto completo del usuario, incluyendo el rol.
+        // Verifica si la API retornó un usuario válido Y EL TOKEN
+        if (responseData && responseData.usuario && responseData.token) { // <--- MODIFICACIÓN CLAVE
+            // Guarda el objeto completo del usuario.
             localStorage.setItem('user', JSON.stringify(responseData.usuario));
+
+            // **CLAVE:** Guarda el token JWT para usarlo en futuras peticiones protegidas.
+            localStorage.setItem('token', responseData.token); // <--- NUEVA LÍNEA
 
             // Redirigir al dashboard
             window.location.href = 'dashboard.html';
@@ -60,6 +63,7 @@ async function handleLogin(e) {
 
 function handleLogout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('token'); // <--- ELIMINAR TAMBIÉN EL TOKEN
     window.location.href = 'index.html';
 }
 
@@ -75,8 +79,7 @@ function initializeDashboard() {
             userLabel.textContent = `Usuario: ${user.username} (${user.rol_nombre || 'Sin Rol'})`;
         }
 
-        // 2. **Solución del problema de Rol:** Mostrar/Ocultar menús de administrador
-        // Asume que tu objeto 'user' tiene una propiedad 'rol_nombre' con el valor 'Administrador' o un id_rol
+        // 2. Solución del problema de Rol: Mostrar/Ocultar menús de administrador
         const esAdministrador = user.rol_nombre === 'Administrador' || user.id_rol === 1;
 
         if (esAdministrador) {

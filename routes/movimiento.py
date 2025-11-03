@@ -2,8 +2,11 @@ from flask import Blueprint, request, jsonify
 from db_config import execute_query
 from datetime import datetime
 import sys
+from security import token_required
 
+# Blueprint Corregido (Eliminar strict_slashes=False del constructor)
 movimiento_bp = Blueprint('movimiento_bp', __name__)
+
 
 # Función para obtener los campos de Movimiento
 def get_movimiento_fields(data):
@@ -14,18 +17,29 @@ def get_movimiento_fields(data):
         data.get('fecha', fecha_default),
         data.get('glosa'),
         data.get('observacion'),
-        data.get('id_elaborador'),
+        # id_elaborador lo obtendremos del token
         data.get('id_cliente'),
         data.get('id_documento')
     )
 
+
 # --- GET y POST ---
-@movimiento_bp.route('/', methods=['GET', 'POST'])
-def handle_movimientos():
+# Aplicar strict_slashes=False a la ruta principal para evitar 308
+@movimiento_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
+@token_required
+def handle_movimientos(current_user):
+    # Obtener el ID del usuario logeado
+    id_usuario_loggeado = current_user['id_usuario']
+
     if request.method == 'POST':
         # --- CREATE ---
         data = request.get_json()
-        tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento = get_movimiento_fields(data)
+
+        # Obtenemos los campos, omitiendo id_elaborador de la data
+        tipo, fecha, glosa, observacion, id_cliente, id_documento = get_movimiento_fields(data)
+
+        # Usamos el id_usuario del token como id_elaborador
+        id_elaborador = id_usuario_loggeado
 
         if not all([tipo, glosa]):
             return jsonify({"error": "Faltan campos obligatorios: tipo (E/S) y glosa."}), 400
@@ -42,7 +56,7 @@ def handle_movimientos():
         try:
             results = execute_query(sql, params, fetch=True)
             new_id = results[0]['id_movimiento'] if results else None
-            print(f"Movimiento creado: id_movimiento={new_id}, tipo={tipo}")
+            print(f"Movimiento creado: id_movimiento={new_id}, tipo={tipo}, elaborador={id_elaborador}")
             return jsonify({
                 "mensaje": "Movimiento creado con éxito.",
                 "movimiento": {
@@ -55,7 +69,7 @@ def handle_movimientos():
         except Exception as e:
             print(f"Error en POST /api/movimiento/: {e}", file=sys.stderr)
             return jsonify({
-                "error": "Error al crear movimiento. Verifica las FK (elaborador, cliente, documento).",
+                "error": "Error al crear movimiento. Verifica las FK (cliente, documento).",
                 "detalle": str(e)
             }), 400
 
@@ -69,9 +83,14 @@ def handle_movimientos():
             print(f"Error en GET /api/movimiento/: {e}", file=sys.stderr)
             return jsonify({"error": "Error al obtener lista de movimientos"}), 500
 
+
 # --- GET, PUT, DELETE por id_movimiento ---
 @movimiento_bp.route('/<int:id_movimiento>', methods=['GET', 'PUT', 'DELETE'])
-def handle_movimiento(id_movimiento):
+@token_required
+def handle_movimiento(current_user, id_movimiento):
+    # Obtener el ID del usuario logeado
+    id_usuario_loggeado = current_user['id_usuario']
+
     if request.method == 'GET':
         # --- READ ONE ---
         sql = "SELECT * FROM movimiento WHERE id_movimiento = %s"
@@ -87,7 +106,12 @@ def handle_movimiento(id_movimiento):
     elif request.method == 'PUT':
         # --- UPDATE ---
         data = request.get_json()
-        tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento = get_movimiento_fields(data)
+
+        # Obtenemos los campos, omitiendo id_elaborador de la data
+        tipo, fecha, glosa, observacion, id_cliente, id_documento = get_movimiento_fields(data)
+
+        # Establecemos el id_elaborador con el usuario actual
+        id_elaborador = id_usuario_loggeado
 
         if not all([tipo, glosa]):
             return jsonify({"error": "Los campos 'tipo' y 'glosa' son obligatorios para actualizar."}), 400
@@ -105,7 +129,7 @@ def handle_movimiento(id_movimiento):
         try:
             row_count = execute_query(sql, params)
             if row_count > 0:
-                print(f"Movimiento actualizado: id_movimiento={id_movimiento}")
+                print(f"Movimiento actualizado: id_movimiento={id_movimiento}, nuevo_elaborador={id_elaborador}")
                 return jsonify({"mensaje": "Movimiento actualizado con éxito.", "id_movimiento": id_movimiento}), 200
             return jsonify({"error": "Movimiento no encontrado para actualizar."}), 404
         except Exception as e:

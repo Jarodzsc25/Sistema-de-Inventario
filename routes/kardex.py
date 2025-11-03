@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
-import sys  # Para logging de errores detallado
+import sys
+# --- AÑADIDO: Importar decorador de seguridad ---
+from security import token_required
 
 # Blueprint
 kardex_bp = Blueprint('kardex_bp', __name__)
@@ -8,6 +10,7 @@ kardex_bp = Blueprint('kardex_bp', __name__)
 
 # --- GET y POST ---
 @kardex_bp.route('/', methods=['GET', 'POST'])
+@token_required # PROTEGIDO
 def handle_kardex_entries():
     if request.method == 'POST':
         # --- CREATE (Crear nuevo registro de Kardex) ---
@@ -16,7 +19,7 @@ def handle_kardex_entries():
         id_producto = data.get('id_producto')
         cantidad = data.get('cantidad')
         unitario = data.get('unitario')
-        suttotal = data.get('suttotal')  # se llama así en tu BD
+        suttotal = data.get('suttotal') # se llama así en tu BD
 
         # Validación
         if not all([id_movimiento, id_producto, cantidad, unitario]):
@@ -71,6 +74,7 @@ def handle_kardex_entries():
 
 # --- GET, PUT, DELETE por clave compuesta ---
 @kardex_bp.route('/<int:id_movimiento>/<int:id_producto>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # PROTEGIDO
 def handle_kardex_entry(id_movimiento, id_producto):
     if request.method == 'GET':
         # --- READ ONE ---

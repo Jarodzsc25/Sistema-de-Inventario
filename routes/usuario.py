@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import base64
 import sys  # Para logging de errores en consola
-
+# --- IMPORTAR DECORADOR DESDE app.py ---
+from security import token_required
 
 
 usuario_bp = Blueprint('usuario_bp', __name__)
@@ -14,9 +15,11 @@ def hash_password(password):
 
 # --- GET y POST ---
 @usuario_bp.route('/', methods=['GET', 'POST'])
+@token_required # <--- ¡RUTA PROTEGIDA! Se aplica a GET y POST
 def handle_usuarios():
     if request.method == 'POST':
         # --- CREATE (Crear Usuario) ---
+        # Solo se ejecuta si el token es válido
         data = request.get_json()
         id_usuario = data.get('id_usuario')
         username = data.get('username')
@@ -51,6 +54,7 @@ def handle_usuarios():
 
     else:
         # --- READ ALL (Obtener todos los usuarios) ---
+        # Solo se ejecuta si el token es válido
         sql = """
             SELECT 
                 u.id_usuario, u.username, u.id_rol, 
@@ -70,9 +74,11 @@ def handle_usuarios():
 
 # --- GET, PUT, DELETE por id_usuario ---
 @usuario_bp.route('/<int:id_usuario>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # <--- ¡RUTA PROTEGIDA! Se aplica a GET, PUT y DELETE por ID
 def handle_usuario(id_usuario):
     if request.method == 'GET':
         # --- READ ONE ---
+        # Solo se ejecuta si el token es válido
         sql = """
             SELECT 
                 u.id_usuario, u.username, u.id_rol, 
@@ -94,6 +100,7 @@ def handle_usuario(id_usuario):
 
     elif request.method == 'PUT':
         # --- UPDATE ---
+        # Solo se ejecuta si el token es válido
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
@@ -130,6 +137,7 @@ def handle_usuario(id_usuario):
 
     elif request.method == 'DELETE':
         # --- DELETE ---
+        # Solo se ejecuta si el token es válido
         sql = "DELETE FROM usuario WHERE id_usuario = %s"
         try:
             row_count = execute_query(sql, (id_usuario,))

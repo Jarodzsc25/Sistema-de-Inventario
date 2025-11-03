@@ -1,7 +1,25 @@
-# backend/app.py
 from flask import Flask, jsonify, request
 from psycopg2 import OperationalError, DatabaseError
 from db_config import execute_query
+import base64
+# --- CAMBIO: JWT y utilidades ahora en security.py ---
+from flask_cors import CORS
+import jwt  # Necesario solo para la función login()
+
+# --- IMPORTAR DESDE EL NUEVO ARCHIVO ---
+# Asume que ya creaste security.py y tiene la función token_required
+from security import token_required
+# -------------------------------------
+
+from datetime import datetime, timedelta  # Necesario para la función login()
+
+# --- INICIALIZACIÓN DE LA APLICACIÓN Y CONFIGURACIÓN ---
+app = Flask(__name__)
+CORS(app)
+app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'tv7CdjDRtCQnLL0f6cUPrJ1LYoSDX0N25aQ_IP4uHh0'
+
+# --- IMPORTAR BLUEPRINTS DESPUÉS DE LA CONFIGURACIÓN ---
 from routes.rol import rol_bp
 from routes.persona import persona_bp
 from routes.usuario import usuario_bp
@@ -11,18 +29,6 @@ from routes.documento import documento_bp
 from routes.movimiento import movimiento_bp
 from routes.kardex import kardex_bp
 from routes.cliente import cliente_bp
-import base64
-
-app = Flask(__name__)
-app.config['DEBUG'] = True
-
-from flask_cors import CORS
-
-app = Flask(__name__)
-CORS(app)
-
-
-
 
 # Registrar Blueprints
 app.register_blueprint(rol_bp, url_prefix='/api/rol')
@@ -35,12 +41,16 @@ app.register_blueprint(movimiento_bp, url_prefix='/api/movimiento')
 app.register_blueprint(kardex_bp, url_prefix='/api/kardex')
 app.register_blueprint(cliente_bp, url_prefix='/api/cliente')
 
-# --- NUEVA RUTA DE LOGIN ---
+
+# --- RUTA DE LOGIN (CORREGIDA) ---
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
+
+    # --- LÍNEAS CORREGIDAS ---
     username = data.get('username')
     password = data.get('password')
+    # -------------------------
 
     if not username or not password:
         return jsonify({"error": "Usuario y contraseña requeridos"}), 400
@@ -62,9 +72,20 @@ def login():
         if encoded_pass != user['password']:
             return jsonify({"error": "Contraseña incorrecta"}), 401
 
-        # Login exitoso
+        # Generar Token JWT
+        payload = {
+            'id_usuario': user['id_usuario'],
+            'username': user['username'],
+            'rol_nombre': user['rol_nombre'],
+            'exp': datetime.utcnow() + timedelta(hours=24)  # Token expira en 24 horas
+        }
+
+        token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+
+        # Login exitoso: devolver el token
         return jsonify({
             "mensaje": "Login exitoso",
+            "token": token,
             "usuario": {
                 "id_usuario": user['id_usuario'],
                 "username": user['username'],

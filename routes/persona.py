@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
-import sys  # Para logging detallado
+import sys
+# --- AÑADIDO: Importar decorador de seguridad ---
+from security import token_required
 
 # Define el Blueprint para las rutas de Persona
 persona_bp = Blueprint('persona_bp', __name__)
@@ -24,12 +26,13 @@ def get_persona_fields(data):
 
 # --- GET ALL / POST ---
 @persona_bp.route('/', methods=['GET', 'POST'])
+@token_required # PROTEGIDO
 def handle_personas():
     if request.method == 'POST':
         # --- CREATE ---
         data = request.get_json()
         nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion = get_persona_fields(data)
-        es_cliente = data.get('es_cliente', False)  # <-- Nuevo campo
+        es_cliente = data.get('es_cliente', False) # <-- Nuevo campo
 
         if not nombre:
             return jsonify({"error": "El campo 'nombre' es obligatorio."}), 400
@@ -54,7 +57,7 @@ def handle_personas():
             # Recuperar persona con es_cliente
             persona_sql = """
                 SELECT p.*, 
-                       CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
+                        CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
                 FROM persona p
                 LEFT JOIN cliente c ON p.id_persona = c.id_persona
                 WHERE p.id_persona = %s
@@ -74,7 +77,7 @@ def handle_personas():
         # --- READ ALL ---
         sql = """
             SELECT p.*, 
-                   CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
+                    CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
             FROM persona p
             LEFT JOIN cliente c ON p.id_persona = c.id_persona
             ORDER BY p.id_persona
@@ -89,12 +92,13 @@ def handle_personas():
 
 # --- GET / PUT / DELETE por id_persona ---
 @persona_bp.route('/<int:id_persona>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # PROTEGIDO
 def handle_persona(id_persona):
     if request.method == 'GET':
         # --- READ ONE ---
         sql = """
             SELECT p.*, 
-                   CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
+                    CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
             FROM persona p
             LEFT JOIN cliente c ON p.id_persona = c.id_persona
             WHERE p.id_persona = %s
@@ -144,7 +148,7 @@ def handle_persona(id_persona):
                 # Devolver persona actualizada
                 persona_sql = """
                     SELECT p.*, 
-                           CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
+                            CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
                     FROM persona p
                     LEFT JOIN cliente c ON p.id_persona = c.id_persona
                     WHERE p.id_persona = %s

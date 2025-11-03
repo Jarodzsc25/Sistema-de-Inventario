@@ -1,12 +1,16 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import sys
+from security import token_required
 
+# Blueprint Corregido (Eliminar strict_slashes=False del constructor)
 producto_bp = Blueprint('producto_bp', __name__)
 
 # --- GET y POST ---
-@producto_bp.route('/', methods=['GET', 'POST'])
-def handle_productos():
+# Aplicar strict_slashes=False a la ruta principal para evitar 308
+@producto_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
+@token_required
+def handle_productos(current_user):
     if request.method == 'POST':
         # --- CREATE ---
         data = request.get_json()
@@ -64,7 +68,8 @@ def handle_productos():
 
 # --- GET, PUT, DELETE por id_producto ---
 @producto_bp.route('/<int:id_producto>', methods=['GET', 'PUT', 'DELETE'])
-def handle_producto(id_producto):
+@token_required
+def handle_producto(current_user, id_producto):
     if request.method == 'GET':
         # --- READ ONE ---
         sql = """

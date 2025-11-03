@@ -2,12 +2,17 @@ from flask import Blueprint, request, jsonify
 from db_config import execute_query
 from datetime import datetime
 import sys
+from security import token_required
 
+# Blueprint Corregido (Eliminar strict_slashes=False del constructor)
 cliente_bp = Blueprint('cliente_bp', __name__)
 
+
 # --- GET ALL / POST ---
-@cliente_bp.route('/', methods=['GET', 'POST'])
-def handle_clientes():
+# Aplicar strict_slashes=False a la ruta principal para evitar 308
+@cliente_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
+@token_required
+def handle_clientes(current_user):
     if request.method == 'POST':
         # --- CREATE ---
         data = request.get_json()
@@ -50,7 +55,8 @@ def handle_clientes():
 
 # --- GET / PUT / DELETE por id_cliente ---
 @cliente_bp.route('/<int:id_cliente>', methods=['GET', 'PUT', 'DELETE'])
-def handle_cliente(id_cliente):
+@token_required
+def handle_cliente(current_user, id_cliente):
     if request.method == 'GET':
         sql = """
             SELECT c.id_cliente, p.id_persona, p.nombre, p.primer_apellido, p.segundo_apellido,

@@ -1,11 +1,14 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import sys
+# --- AÑADIDO: Importar decorador de seguridad ---
+from security import token_required
 
 distribuidor_bp = Blueprint('distribuidor_bp', __name__)
 
 # --- GET y POST ---
 @distribuidor_bp.route('', methods=['GET', 'POST'])
+@token_required # PROTEGIDO
 def handle_distribuidores():
     if request.method == 'POST':
         # --- CREATE ---
@@ -58,6 +61,7 @@ def handle_distribuidores():
 
 # --- GET, PUT, DELETE por id_distribuidor ---
 @distribuidor_bp.route('/<int:id_distribuidor>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # PROTEGIDO
 def handle_distribuidor(id_distribuidor):
     if request.method == 'GET':
         # --- READ ONE ---

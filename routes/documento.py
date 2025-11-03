@@ -2,11 +2,14 @@ from flask import Blueprint, request, jsonify
 from db_config import execute_query
 from datetime import datetime
 import sys
+# --- AÑADIDO: Importar decorador de seguridad ---
+from security import token_required
 
 documento_bp = Blueprint('documento_bp', __name__)
 
 # --- GET y POST ---
 @documento_bp.route('/', methods=['GET', 'POST'])
+@token_required # PROTEGIDO
 def handle_documentos():
     if request.method == 'POST':
         # --- CREATE ---
@@ -48,6 +51,7 @@ def handle_documentos():
 
 # --- GET, PUT, DELETE por id_documento ---
 @documento_bp.route('/<int:id_documento>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # PROTEGIDO
 def handle_documento(id_documento):
     if request.method == 'GET':
         # --- READ ONE ---
