@@ -1,41 +1,24 @@
+# Sistema de Ventas
 
-# API REST - Sistema de Inventario y Gestión de Usuarios
+Este proyecto es un **Sistema de Gestión de Ventas e Inventario** diseñado para administrar productos, distribuidores, movimientos de inventario, usuarios y personas. Cuenta con una arquitectura de **Backend (Flask/Python)** y un **Frontend (HTML/CSS/JavaScript)**.
 
-Este proyecto es una **API RESTful** desarrollada en **Flask (Python)** que permite la gestión de usuarios, roles, personas, productos, movimientos, documentos, distribuidores y kardex dentro de un sistema de inventario.  
-La aplicación está organizada de forma modular mediante **Blueprints** y documentada con **OpenAPI (Swagger)**.
+## Características Principales
 
----
+* **Gestión de Productos:** Creación, edición y listado de productos con detalles como código, nombre, descripción, unidad y distribuidor.
+* **Gestión de Movimientos:** Registro y listado de movimientos de inventario (entradas/salidas).
+* **Gestión de Distribuidores, Usuarios y Personas** (Funcionalidad `admin-only` en el menú).
+* **Autenticación de Usuarios:** Login seguro con manejo de roles (se asume *Administrador* y *Vendedor* por la estructura del menú).
+* **Interfaz de Usuario:** Interfaz simple y responsive construida con **Bootstrap 5**.
 
-## Características principales
+## Tecnologías Utilizadas
 
-- Arquitectura modular usando **Flask Blueprints**  
-- CRUD completo para:
-  - **Usuarios**
-  - **Roles**
-  - **Personas**
-  - **Productos**
-  - **Movimientos**
-  - **Distribuidores**
-  - **Documentos**
-  - **Kardex**
-- Conexión con base de datos **PostgreSQL/MySQL**
-- Documentación de endpoints con **OpenAPI 3.1.0**
-- Validaciones básicas y manejo de errores
-- Respuestas en formato **JSON**
+| Componente | Tecnología | Descripción |
+| :--- | :--- | :--- |
+| **Backend** | **Python / Flask** | Servidor API RESTful para la lógica de negocio y la conexión a la base de datos. |
+| **Base de Datos** | **PostgreSQL** (se asume por `psycopg2` en `app.py`) | Base de datos relacional para almacenar toda la información del sistema. |
+| **Frontend** | **HTML5, CSS3, JavaScript** | Interfaz de usuario con manejo de la lógica de presentación y consumo de la API. |
+| **Estilos** | **Bootstrap 5** | Framework CSS para el diseño y la responsividad. |
 
----
-
-## Tecnologías utilizadas
-
-| Tecnología | Descripción |
-|-------------|-------------|
-| **Python 3.x** | Lenguaje principal |
-| **Flask** | Framework web |
-| **Blueprints** | Modularización de rutas |
-| **PostgreSQL / MySQL** | Base de datos |
-| **Swagger / OpenAPI** | Documentación interactiva |
-| **Werkzeug** | Utilidades de seguridad |
-| **JWT (opcional)** | Autenticación basada en tokens |
 
 ---
 
@@ -57,31 +40,61 @@ flask_api_sistema/
 │   ├── distribuidor.py       # CRUD de distribuidores
 │   ├── documento.py          # CRUD de documentos
 │   └── kardex.py             # CRUD de kardex
+frontend/
+├── index.html               # Página de inicio.
+├── dashboard.html           # Interfaz principal de la aplicación.
+│
+├── css/
+│   └── style.css            # Estilos CSS generales.
+│
+└── js/
+    ├── api.js               # Funciones para realizar llamadas a la API (fetch, axios).
+    ├── auth.js              # Lógica para la autenticación de usuarios (login/logout).
+    ├── ui_admin.js          # Scripts específicos para la interfaz del administrador.
+    └── ui_vendedor.js       # Scripts específicos para la interfaz del vendedor.
+
 ```
 
 ---
+## Puesta en Marcha
 
-## Instalación y configuración
+Sigue estos pasos para configurar y ejecutar el proyecto en tu entorno local.
 
-### Clonar el repositorio
-```bash
-git clone https://github.com/tu_usuario/flask_api_sistema.git
-cd flask_api_sistema
-```
+### 1. Backend (API Flask)
 
-### Crear entorno virtual
-```bash
-python -m venv venv
-source venv/bin/activate   # En Linux/Mac
-venv\Scripts\activate      # En Windows
-```
+El backend maneja las rutas API y la interacción con la base de datos.
 
-### Instalar dependencias
-```bash
-pip install -r requirements.txt
-```
+**Requisitos Previos de Aplicaciones Instaladas:**
+* PyCharm 2025.2.1.1
+* PostgreSQL
 
-### Configurar la base de datos
+**Como Configurar el Sistema:**
+
+1.  **Clona el repositorio:**
+    ```bash
+    git clone [URL-DEL-REPOSITORIO]
+    cd sistema de inventario
+    ```
+2.  **Descarga el Zip del Repositorio:**
+    ```bash
+    Entre a esta URL seleccione codigo y descargar zip:
+    Una vez descargado copiar el zip en un directorio y descomprima el archivo.
+    Luego entre a la aplicacion de Pycharm, acceda a archivos ve al apartado de open y busque la carpeta de descomprimio, acepte y se le cargara todo el sistema. 
+    ```
+3.  **Instala las dependencias:**
+
+    ```bash
+    En la terminal de pycharm introduzca el siguiente comando:
+    pip install -r requirements.txt
+    ```
+4.  **Configura la Base de Datos:**
+    * Acceda a la Aplicacion de Postgresql, una vez dentro se le pedira crear un usuario y contraseña(nota no olvide los datos que pondra sin eso no podra avanzar).
+    * Una vez creado el usuario y contraseña, ve al apartado de Postgresql 16(Click derecho crear base de datos nueva), en esa seccion ponga el siguiente nombre:"bd_ventas".
+    * Una vez creada baje hasta esqumas(1) haga click izquierdo, ahora click derecho en public y seleccione Scrip Create.
+    * Una vez creado borre el texto que tiene; en la aplicacion de Pycharm, en la carpeta documento hay un archivo "llamado codigo sql.txt", copie el contenido en el scrip de postgresql.
+    * Una vez copiado el codigo dentro el scrip, oprima f5 para que se ejecute el codigo.
+    * Seleciona public y otra vez f5 para actualizar; para verificar que se creo correctamente baje hasta el apartado que diga tablas seleciona y deberia aparecer ya las tablas, si le aparece esta todo correcto.
+    * ### Configurar la base de datos
 En el archivo `db_config.py`, agrega tus credenciales:
 ```python
 DB_CONFIG = {
@@ -91,192 +104,74 @@ DB_CONFIG = {
     'database': 'nombre_db'
 }
 ```
+5.  **Ejecuta el servidor:**
+    ```bash
+    En la terminar de Pycharm escriba lo siguiente:
+    python app.py
+    ```
+    El servidor se ejecutará por defecto en `http://localhost:5000`. La API base es `http://localhost:5000/api`.
+
+### 2. Frontend (Interfaz de Usuario)
+
+El frontend es una aplicación web pura que consume la API del backend.
+
+**Configuración:**
+
+1.  **Navega a la carpeta del frontend:**
+    ```bash
+    En la carpta del frontend ve al archivo login.html click derecho y baja hasta "open in" y selecciona "browser", luego seleciona tu navegador favorito.
+    ```
+2.  **Servir los archivos:**
+    * Simplemente abre `index.html` en tu navegador para la pantalla de login.
+    * **Importante:** Para evitar problemas de CORS y de carga de módulos, se recomienda utilizar un servidor web local simple (como Live Server en VS Code o `python -m http.server`).
 
 ---
 
-## Ejecución del servidor
+## Estructura del Proyecto (Resumen)
 
-Ejecuta el servidor Flask:
-```bash
-python app.py
-```
-
-Accede a la API en:
-```
-http://127.0.0.1:5000
-```
-
----
-
-## Documentación de la API
-
-El archivo [`openapi.yaml`](./openapi.yaml) contiene toda la documentación de los endpoints.  
-Puedes visualizarla en **Swagger Editor**:
-
-1. Abre [https://editor.swagger.io](https://editor.swagger.io)
-2. Carga el archivo `openapi.yaml`
-3. Prueba los endpoints de forma interactiva
+| Archivo/Ruta | Descripción |
+| :--- | :--- |
+| **`app.py`** | Punto de entrada del backend (Flask). Define la aplicación, CORS y registra los Blueprints de las rutas. |
+| **`routes/*.py`** | Módulos con las rutas API específicas (e.g., `routes/producto.py`, `routes/usuario.py`, `routes/cliente.py`). |
+| **`db_config.py`** | Módulo para la conexión y ejecución de consultas a la BD. |
+| **`index.html`** | Estructura principal, incluye el formulario de **Login** y la plantilla principal del sistema. |
+| **`ui_vendedor.js`** | Lógica JavaScript del frontend, manejo de eventos de menú (Productos, Movimientos) y renderizado de tablas. |
+| **`api.js`** | Funciones JavaScript para interactuar con el Backend (p.ej., `getProductos()`, `loginUser()`). |
+| **`frontend.txt`** | (Asumido como `ui_vendedor.js` o similar) Contiene la lógica para la visualización de listas de productos y movimientos. |
 
 ---
 
-## Endpoints principales
+## Base de Datos
 
-### Usuarios
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/usuarios` | Lista todos los usuarios |
-| POST | `/usuarios` | Crea un nuevo usuario |
-| GET | `/usuarios/{id}` | Obtiene un usuario por ID |
-| PUT | `/usuarios/{id}` | Actualiza un usuario |
-| DELETE | `/usuarios/{id}` | Elimina un usuario |
+El diseño de la base de datos es clave para la estructura de la aplicación. 
 
----
+> La imagen anterior muestra el **diagrama de la base de datos** (o similar), que incluye tablas como `usuario`, `persona`, `rol`, `cliente`, `producto`, `distribuidor`, `movimiento`, entre otras.
 
-### Roles
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/roles` | Obtiene todos los roles |
-| POST | `/roles` | Crea un nuevo rol |
-| GET | `/roles/{id}` | Obtiene un rol por ID |
-| PUT | `/roles/{id}` | Actualiza un rol |
-| DELETE | `/roles/{id}` | Elimina un rol |
+**Tablas Relevantes (Basado en el código):**
+
+* `persona`
+* `usuario`
+* `rol`
+* `distribuidor`
+* `producto`
+* `movimiento`
+* `cliente`
 
 ---
 
-### Personas
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/personas` | Lista todas las personas |
-| POST | `/personas` | Crea una nueva persona |
-| GET | `/personas/{id}` | Obtiene una persona por ID |
-| PUT | `/personas/{id}` | Actualiza una persona |
-| DELETE | `/personas/{id}` | Elimina una persona |
+## Contribución
 
----
+Si deseas contribuir, por favor:
 
-### Productos
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/productos` | Lista todos los productos |
-| POST | `/productos` | Crea un nuevo producto |
-| GET | `/productos/{id}` | Obtiene un producto por ID |
-| PUT | `/productos/{id}` | Actualiza un producto |
-| DELETE | `/productos/{id}` | Elimina un producto |
-
----
-
-### Distribuidores
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/distribuidores` | Lista todos los distribuidores |
-| POST | `/distribuidores` | Crea un nuevo distribuidor |
-| GET | `/distribuidores/{id}` | Obtiene un distribuidor por ID |
-| PUT | `/distribuidores/{id}` | Actualiza un distribuidor |
-| DELETE | `/distribuidores/{id}` | Elimina un distribuidor |
-
----
-
-### Documentos
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/documentos` | Lista todos los documentos |
-| POST | `/documentos` | Crea un nuevo documento |
-| GET | `/documentos/{id}` | Obtiene un documento por ID |
-| PUT | `/documentos/{id}` | Actualiza un documento |
-| DELETE | `/documentos/{id}` | Elimina un documento |
-
----
-
-### Movimientos
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/movimientos` | Lista todos los movimientos |
-| POST | `/movimientos` | Crea un nuevo movimiento |
-| GET | `/movimientos/{id}` | Obtiene un movimiento por ID |
-| PUT | `/movimientos/{id}` | Actualiza un movimiento |
-| DELETE | `/movimientos/{id}` | Elimina un movimiento |
-
----
-
-### Kardex
-| Método | Endpoint | Descripción |
-|--------|-----------|-------------|
-| GET | `/kardex` | Lista todos los registros del kardex |
-| POST | `/kardex` | Crea un nuevo registro en el kardex |
-| GET | `/kardex/{id}` | Obtiene un registro por ID |
-| PUT | `/kardex/{id}` | Actualiza un registro del kardex |
-| DELETE | `/kardex/{id}` | Elimina un registro del kardex |
-
----
-
-## Ejemplo de petición
-
-```json
-POST /usuarios
-{
-  "username": "Jose",
-  "password": "J@se25",
-  "email": "jose25@gmail.com"
-}
-```
-
-Respuesta:
-```json
-{
-  "message": "Usuario creado exitosamente",
-  "id_usuario": 1
-}
-```
-
----
-
-## Autenticación (opcional)
-
-Para proteger tus endpoints, puedes usar **JWT**:
-
-```bash
-pip install Flask-JWT-Extended
-```
-
-Ejemplo:
-```python
-from flask_jwt_extended import jwt_required
-
-@usuario_bp.route('/usuarios', methods=['GET'])
-@jwt_required()
-def get_usuarios():
-    ...
-```
-
----
-
-## Integración con Swagger UI (local)
-
-Puedes montar tu propia interfaz Swagger ejecutando:
-```bash
-pip install flask-swagger-ui
-```
-
-Y en `app.py`:
-```python
-from flask_swagger_ui import get_swaggerui_blueprint
-
-SWAGGER_URL = '/api/docs'
-API_URL = '/static/openapi.yaml'
-
-swagger_bp = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
-app.register_blueprint(swagger_bp, url_prefix=SWAGGER_URL)
-```
-
-Accede en:
-```
-http://127.0.0.1:5000/api/docs
-```
+1.  Haz un *Fork* de este repositorio.
+2.  Crea una rama para tu característica (`git checkout -b feature/nueva-caracteristica`).
+3.  Comitéa tus cambios (`git commit -m 'feat: Añadir nueva característica X'`).
+4.  Empuja la rama (`git push origin feature/nueva-caracteristica`).
+5.  Abre un *Pull Request*.
 
 ---
 
 ## Licencia
-
 Este proyecto está bajo la licencia **MIT**.  
 Puedes usarlo, modificarlo y distribuirlo libremente citando la fuente original.
 
