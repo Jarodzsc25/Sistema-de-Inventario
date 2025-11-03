@@ -72,12 +72,12 @@ El backend maneja las rutas API y la interacción con la base de datos.
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone [URL-DEL-REPOSITORIO]
+    git clone https://github.com/Jarodzsc25/Sistema-de-Inventario.git
     cd sistema de inventario
     ```
 2.  **Descarga el Zip del Repositorio:**
     ```bash
-    Entre a esta URL seleccione codigo y descargar zip:
+    Entre a esta URL seleccione codigo y descargar zip: https://github.com/Jarodzsc25/Sistema-de-Inventario.git
     Una vez descargado copiar el zip en un directorio y descomprima el archivo.
     Luego entre a la aplicacion de Pycharm, acceda a archivos ve al apartado de open y busque la carpeta de descomprimio, acepte y se le cargara todo el sistema. 
     ```
