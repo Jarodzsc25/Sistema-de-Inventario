@@ -1,7 +1,16 @@
 openapi: 3.0.0
 info:
   title: Sistema de Ventas API
-  description: API completa para la gestión de un Sistema de Ventas (Basado en la especificación OpenAPI 3.0.0).
+  description: |
+    Documentación de la API completa para la gestión de un **Sistema de Ventas**,
+    construida con Flask y PostgreSQL.
+
+    **Endpoints Principales (CRUD):**
+    * Rol, Persona, Usuario, Distribuidor, Producto, Documento, Cliente.
+
+    **Endpoints de Transacción/Reporte:**
+    * Movimiento (Encabezado y detalle de Kardex)
+    * Kardex (Reporte general)
   version: 1.0.0
 servers:
   - url: http://localhost:5000/api
@@ -15,9 +24,9 @@ tags:
   - name: Distribuidor
   - name: Producto
   - name: Documento
-  - name: Movimiento
+  - name: Movimiento (Transacciones)
   - name: Cliente
-  - name: Kardex
+  - name: Kardex (Detalles/Reporte)
 
 paths:
   # ============================================
@@ -480,7 +489,7 @@ paths:
     get:
       summary: Obtener lista de movimientos
       tags:
-        - Movimiento
+        - Movimiento (Transacciones)
       responses:
         '200':
           description: Lista de movimientos
@@ -493,7 +502,7 @@ paths:
     post:
       summary: Crear un nuevo movimiento (Transacción)
       tags:
-        - Movimiento
+        - Movimiento (Transacciones)
       description: Crea un nuevo movimiento y sus items de kardex asociados.
       requestBody:
         required: true
@@ -514,9 +523,9 @@ paths:
           type: integer
           description: ID del movimiento
     get:
-      summary: Obtener movimiento por ID (incluyendo items)
+      summary: Obtener movimiento por ID (incluyendo items de Kardex)
       tags:
-        - Movimiento
+        - Movimiento (Transacciones)
       responses:
         '200':
           description: Detalles del movimiento y sus items de kardex
@@ -597,13 +606,13 @@ paths:
           description: Cliente eliminado
 
   # ============================================
-  # KARDEX (General)
+  # KARDEX (Reporte)
   # ============================================
   /kardex:
     get:
       summary: Obtener registro general del kardex
       tags:
-        - Kardex
+        - Kardex (Detalles/Reporte)
       description: Permite obtener todos los registros del kardex, idealmente con filtros de producto o fecha.
       responses:
         '200':
@@ -617,9 +626,6 @@ paths:
 
 components:
   schemas:
-    # ---------------------------------------------
-    # 1. ROL
-    # ---------------------------------------------
     Rol:
       type: object
       description: Modelo de Rol.
@@ -644,9 +650,6 @@ components:
       required:
         - nombre
 
-    # ---------------------------------------------
-    # 2. PERSONA
-    # ---------------------------------------------
     Persona:
       type: object
       description: Modelo de Persona (base para Usuario, Distribuidor y Cliente).
@@ -657,20 +660,17 @@ components:
           readOnly: true
         nombre:
           type: string
-          description: Nombre de pila.
         primer_apellido:
           type: string
         segundo_apellido:
           type: string
         numero_ci:
           type: integer
-          description: Número de Cédula de Identidad.
         complemento_ci:
           type: string
         correo:
           type: string
           format: email
-          description: Correo electrónico único.
         telefono:
           type: string
         direccion:
@@ -705,9 +705,6 @@ components:
         - numero_ci
         - correo
 
-    # ---------------------------------------------
-    # 3. USUARIO
-    # ---------------------------------------------
     Usuario:
       type: object
       description: Modelo de Usuario (Vista completa).
@@ -718,11 +715,8 @@ components:
           readOnly: true
         username:
           type: string
-          description: Nombre de usuario único para el login.
         id_rol:
           type: integer
-          description: ID del rol asignado (FK a Rol).
-        # Campos de Persona
         nombre:
           type: string
         primer_apellido:
@@ -766,9 +760,6 @@ components:
         id_rol:
           type: integer
 
-    # ---------------------------------------------
-    # 4. DISTRIBUIDOR
-    # ---------------------------------------------
     Distribuidor:
       type: object
       description: Modelo de Distribuidor (Vista completa).
@@ -780,7 +771,6 @@ components:
         empresa:
           type: string
           description: Nombre de la empresa distribuidora (Único).
-        # Campos de Persona
         nombre:
           type: string
         correo:
@@ -801,9 +791,6 @@ components:
         - id_persona
         - empresa
 
-    # ---------------------------------------------
-    # 5. PRODUCTO
-    # ---------------------------------------------
     Producto:
       type: object
       description: Modelo de Producto.
@@ -858,9 +845,6 @@ components:
         - precio_base
         - id_distribuidor
 
-    # ---------------------------------------------
-    # 6. DOCUMENTO
-    # ---------------------------------------------
     Documento:
       type: object
       description: Modelo de Documento (ej. Factura, Nota de Venta).
@@ -875,7 +859,7 @@ components:
           type: string
           maxLength: 1
           description: Tipo de documento (ej. 'F' para Factura, 'N' para Nota).
-          enum: [F, N, R, O] # Asumiendo Factura, Nota, Recibo, Otro
+          enum: [F, N, R, O]
       required:
         - id_documento
         - nombre
@@ -893,9 +877,6 @@ components:
         - nombre
         - tipo
 
-    # ---------------------------------------------
-    # 7. CLIENTE
-    # ---------------------------------------------
     Cliente:
       type: object
       description: Modelo de Cliente (Vista completa).
@@ -909,7 +890,6 @@ components:
           maxLength: 1
           description: Tipo de cliente ('P' para Persona, 'J' para Jurídica).
           enum: [P, J]
-        # Campos de Persona
         nombre:
           type: string
         correo:
@@ -932,9 +912,6 @@ components:
         - id_persona
         - tipo
 
-    # ---------------------------------------------
-    # 8. KARDEX (Detalle de Movimiento)
-    # ---------------------------------------------
     Kardex:
       type: object
       description: Detalle de un producto en un movimiento (Salida de la API).
@@ -953,7 +930,6 @@ components:
         unitario:
           type: number
           format: float
-          description: Precio unitario al momento del movimiento.
         subtotal:
           type: number
           format: float
@@ -980,9 +956,6 @@ components:
         - cantidad
         - unitario
 
-    # ---------------------------------------------
-    # 9. MOVIMIENTO
-    # ---------------------------------------------
     Movimiento:
       type: object
       description: Encabezado de un Movimiento.
@@ -1039,7 +1012,7 @@ components:
         - properties:
             id_movimiento:
               type: integer
-              readOnly: false # Para evitar el error en allOf
+              readOnly: false
             kardex_items:
               type: array
               description: Lista de los productos y cantidades a incluir en el movimiento.
