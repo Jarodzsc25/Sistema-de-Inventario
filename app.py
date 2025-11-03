@@ -11,7 +11,8 @@ import jwt  # Necesario solo para la función login()
 from security import token_required
 # -------------------------------------
 
-from datetime import datetime, timedelta  # Necesario para la función login()
+# *** CORRECCIÓN: Se agrega timezone para resolver DeprecationWarning ***
+from datetime import datetime, timedelta, timezone  # Necesario para la función login()
 
 # --- INICIALIZACIÓN DE LA APLICACIÓN Y CONFIGURACIÓN ---
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'tv7CdjDRtCQnLL0f6cUPrJ1LYoSDX0N25aQ_IP4uHh0'
 
 # --- IMPORTAR BLUEPRINTS DESPUÉS DE LA CONFIGURACIÓN ---
+# ... (Las importaciones de tus blueprints) ...
 from routes.rol import rol_bp
 from routes.persona import persona_bp
 from routes.usuario import usuario_bp
@@ -30,7 +32,9 @@ from routes.movimiento import movimiento_bp
 from routes.kardex import kardex_bp
 from routes.cliente import cliente_bp
 
+
 # Registrar Blueprints
+# ... (El registro de tus blueprints) ...
 app.register_blueprint(rol_bp, url_prefix='/api/rol')
 app.register_blueprint(persona_bp, url_prefix='/api/persona')
 app.register_blueprint(usuario_bp, url_prefix='/api/usuario')
@@ -77,7 +81,8 @@ def login():
             'id_usuario': user['id_usuario'],
             'username': user['username'],
             'rol_nombre': user['rol_nombre'],
-            'exp': datetime.utcnow() + timedelta(hours=24)  # Token expira en 24 horas
+            # *** CORRECCIÓN DE LA DEPRECATION WARNING ***
+            'exp': datetime.now(timezone.utc) + timedelta(hours=24)  # Token expira en 24 horas
         }
 
         token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')

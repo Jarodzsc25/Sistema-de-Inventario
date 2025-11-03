@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import sys  # Para logging detallado en consola
+# *** 🟢 AGREGAR ESTA IMPORTACIÓN ***
+from security import token_required
 
 # Blueprint para Rol
 rol_bp = Blueprint('rol_bp', __name__)
@@ -8,7 +10,10 @@ rol_bp = Blueprint('rol_bp', __name__)
 
 # --- GET y POST ---
 @rol_bp.route('/', methods=['GET', 'POST'])
+@token_required # <--- 🟢 APLICACIÓN DEL DECORADOR
 def handle_roles():
+    # NOTA: La función no necesita el argumento 'current_user', por lo que la firma
+    #       'def handle_roles():' es correcta.
     if request.method == 'POST':
         # --- CREATE (Crear nuevo Rol) ---
         data = request.get_json()
@@ -54,7 +59,10 @@ def handle_roles():
 
 # --- GET, PUT y DELETE por ID ---
 @rol_bp.route('/<int:id_rol>', methods=['GET', 'PUT', 'DELETE'])
+@token_required # <--- 🟢 APLICACIÓN DEL DECORADOR
 def handle_rol(id_rol):
+    # NOTA: La función no necesita el argumento 'current_user', por lo que la firma
+    #       'def handle_rol(id_rol):' es correcta.
     if request.method == 'GET':
         # --- READ ONE (Obtener un Rol) ---
         sql = "SELECT id_rol, nombre FROM rol WHERE id_rol = %s"

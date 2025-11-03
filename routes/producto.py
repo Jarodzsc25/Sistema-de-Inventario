@@ -10,7 +10,7 @@ producto_bp = Blueprint('producto_bp', __name__)
 # Aplicar strict_slashes=False a la ruta principal para evitar 308
 @producto_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
 @token_required
-def handle_productos(current_user):
+def handle_productos(): # <--- CORREGIDO: Ya no espera 'current_user'
     if request.method == 'POST':
         # --- CREATE ---
         data = request.get_json()
@@ -69,7 +69,7 @@ def handle_productos(current_user):
 # --- GET, PUT, DELETE por id_producto ---
 @producto_bp.route('/<int:id_producto>', methods=['GET', 'PUT', 'DELETE'])
 @token_required
-def handle_producto(current_user, id_producto):
+def handle_producto(id_producto): # <--- CORREGIDO: Ya no espera 'current_user'
     if request.method == 'GET':
         # --- READ ONE ---
         sql = """

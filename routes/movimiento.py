@@ -27,9 +27,10 @@ def get_movimiento_fields(data):
 # Aplicar strict_slashes=False a la ruta principal para evitar 308
 @movimiento_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
 @token_required
-def handle_movimientos(current_user):
+def handle_movimientos(): # <--- CORREGIDO: Ya no espera 'current_user'
     # Obtener el ID del usuario logeado
-    id_usuario_loggeado = current_user['id_usuario']
+    # *** CORRECCIÓN ***
+    id_usuario_loggeado = request.user_id
 
     if request.method == 'POST':
         # --- CREATE ---
@@ -87,9 +88,10 @@ def handle_movimientos(current_user):
 # --- GET, PUT, DELETE por id_movimiento ---
 @movimiento_bp.route('/<int:id_movimiento>', methods=['GET', 'PUT', 'DELETE'])
 @token_required
-def handle_movimiento(current_user, id_movimiento):
+def handle_movimiento(id_movimiento): # <--- CORREGIDO: Ya no espera 'current_user'
     # Obtener el ID del usuario logeado
-    id_usuario_loggeado = current_user['id_usuario']
+    # *** CORRECCIÓN ***
+    id_usuario_loggeado = request.user_id
 
     if request.method == 'GET':
         # --- READ ONE ---
