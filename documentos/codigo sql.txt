@@ -34,8 +34,12 @@ CREATE TABLE usuario (
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     id_rol INT NOT NULL,
-    CONSTRAINT fk_usuario_persona FOREIGN KEY (id_usuario) REFERENCES persona (id_persona) ON DELETE CASCADE,
-    CONSTRAINT fk_usuario_rol FOREIGN KEY (id_rol) REFERENCES rol (id_rol) ON DELETE RESTRICT
+    CONSTRAINT fk_usuario_persona FOREIGN KEY (id_usuario)
+        REFERENCES persona (id_persona)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_usuario_rol FOREIGN KEY (id_rol)
+        REFERENCES rol (id_rol)
+        ON DELETE RESTRICT
 );
 
 -- ============================================
@@ -60,7 +64,9 @@ CREATE TABLE producto (
     descripcion TEXT,
     unidad VARCHAR(150),
     id_distribuidor INT NOT NULL,
-    CONSTRAINT fk_producto_distribuidor FOREIGN KEY (id_distribuidor) REFERENCES distribuidor (id_distribuidor) ON DELETE CASCADE
+    CONSTRAINT fk_producto_distribuidor FOREIGN KEY (id_distribuidor)
+        REFERENCES distribuidor (id_distribuidor)
+        ON DELETE CASCADE
 );
 
 -- ============================================
@@ -73,7 +79,7 @@ CREATE TABLE documento (
 );
 
 -- ============================================
--- TABLA: persona → cliente (NUEVA)
+-- TABLA: cliente
 -- ============================================
 CREATE TABLE cliente (
     id_cliente SERIAL PRIMARY KEY,
@@ -94,11 +100,19 @@ CREATE TABLE movimiento (
     fecha TIMESTAMP,
     glosa VARCHAR(150),
     observacion TEXT,
-    id_elaborador INT REFERENCES usuario (id_usuario) ON DELETE SET NULL,
-    id_cliente INT REFERENCES cliente (id_cliente) ON DELETE SET NULL,
-    id_documento INT REFERENCES documento (id_documento) ON DELETE SET NULL
+    id_elaborador INT,
+    id_cliente INT,
+    id_documento INT,
+    CONSTRAINT fk_movimiento_elaborador FOREIGN KEY (id_elaborador)
+        REFERENCES usuario (id_usuario)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_movimiento_cliente FOREIGN KEY (id_cliente)
+        REFERENCES cliente (id_cliente)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_movimiento_documento FOREIGN KEY (id_documento)
+        REFERENCES documento (id_documento)
+        ON DELETE SET NULL
 );
-
 
 -- ============================================
 -- TABLA: kardex
@@ -110,83 +124,11 @@ CREATE TABLE kardex (
     unitario NUMERIC(34,15),
     suttotal NUMERIC(34,15),
     PRIMARY KEY (id_movimiento, id_producto),
-    CONSTRAINT fk_kardex_movimiento FOREIGN KEY (id_movimiento) REFERENCES movimiento (id_movimiento) ON DELETE CASCADE,
-    CONSTRAINT fk_kardex_producto FOREIGN KEY (id_producto) REFERENCES producto (id_producto) ON DELETE CASCADE
+    CONSTRAINT fk_kardex_movimiento FOREIGN KEY (id_movimiento)
+        REFERENCES movimiento (id_movimiento)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_kardex_producto FOREIGN KEY (id_producto)
+        REFERENCES producto (id_producto)
+        ON DELETE CASCADE
 );
 
-
-de dbdiagram.io
-
-Table rol {
-  id_rol int [pk, increment]
-  nombre varchar(100)
-}
-
-Table persona {
-  id_persona int [pk, increment]
-  nombre varchar(100)
-  primer_apellido varchar(100)
-  segundo_apellido varchar(100)
-  numero_ci int
-  complemento_ci varchar(2)
-  correo varchar(150) [unique]
-  telefono varchar(20)
-  direccion text
-}
-
-Table usuario {
-  id_usuario int [pk, not null, ref: > persona.id_persona]
-  username varchar(50) [unique]
-  password varchar(255)
-  id_rol int [not null, ref: > rol.id_rol]
-}
-
-Table distribuidor {
-  id_distribuidor int [pk, increment]
-  nit int
-  nombre varchar(150)
-  contacto varchar(100)
-  telefono varchar(20)
-  direccion text
-}
-
-Table producto {
-  id_producto int [pk, increment]
-  codigo varchar(5)
-  nombre varchar(150)
-  descripcion text
-  unidad varchar(150)
-  id_distribuidor int [not null, ref: > distribuidor.id_distribuidor]
-}
-
-Table documento {
-  id_documento int [pk, increment]
-  numero int
-  fecha datetime
-}
-
-Table cliente {
-  id_cliente int [pk, increment]
-  id_persona int [unique, not null, ref: > persona.id_persona]
-  fecha_registro datetime
-  observaciones text
-}
-
-Table movimiento {
-  id_movimiento int [pk, increment]
-  tipo char
-  fecha datetime
-  glosa varchar(150)
-  observacion text
-  id_elaborador int [ref: > usuario.id_usuario]
-  id_cliente int [ref: > cliente.id_cliente]
-  id_documento int [ref: > documento.id_documento]
-}
-
-Table kardex {
-  id_movimiento int [pk, not null, ref: > movimiento.id_movimiento]
-  id_producto int [pk, not null, ref: > producto.id_producto]
-  cantidad numeric(34,15)
-  unitario numeric(34,15)
-  suttotal numeric(34,15)
-}
