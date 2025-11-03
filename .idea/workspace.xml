@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se volvio a configurar el readme.md, olvide mi url" />
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se volvio a configurar el openapi.yaml">
+      <change afterPath="$PROJECT_DIR$/OpenApi.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openapi.yaml" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -438,7 +441,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762178242329</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="se volvio a configurar el openapi.yaml">
+      <option name="closed" value="true" />
+      <created>1762179014090</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1762179014090</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -456,7 +467,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="se conecto exitosamente a postman" />
     <MESSAGE value="se movio todos los archivos para un mejor control" />
     <MESSAGE value="se consiguio la conexion con postman nuevamente" />
     <MESSAGE value="se consiguio iniciar sesion con usuario y tener las contrseñas incriptadas" />
@@ -481,7 +491,8 @@
     <MESSAGE value="esta casi listo mi frontend solo falta arreglar pequeños factores" />
     <MESSAGE value="se volvio a configurar el readme.md" />
     <MESSAGE value="se volvio a configurar el readme.md, olvide mi url" />
-    <option name="LAST_COMMIT_MESSAGE" value="se volvio a configurar el readme.md, olvide mi url" />
+    <MESSAGE value="se volvio a configurar el openapi.yaml" />
+    <option name="LAST_COMMIT_MESSAGE" value="se volvio a configurar el openapi.yaml" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
