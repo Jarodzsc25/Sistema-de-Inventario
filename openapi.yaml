@@ -1,18 +1,44 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
-  title: API Sistema de Ventas
-  description: API REST para gestionar roles, usuarios, personas, productos, distribuidores, documentos, movimientos y kardex.
-  version: "1.0"
-
+  title: Sistema de Ventas API
+  description: API completa para la gestión de un Sistema de Ventas, basada en las tablas de la base de datos.
+  version: 1.0.0
 servers:
   - url: http://localhost:5000/api
-    description: Servidor local de desarrollo
+    description: Servidor de desarrollo local
 
 paths:
+  # Rutas de Autenticación (Asumo que hay una)
+  /auth/login:
+    post:
+      summary: Iniciar Sesión de Usuario
+      tags:
+        - Autenticacion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Inicio de sesión exitoso, retorna token
+        '401':
+          description: Credenciales inválidas
 
+  # ============================================
+  # ROL
+  # ============================================
   /rol:
     get:
-      summary: Obtener todos los roles
+      summary: Obtener lista de roles
+      tags:
+        - Rol
       responses:
         '200':
           description: Lista de roles
@@ -22,65 +48,67 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Rol'
-              examples:
-                sample:
-                  value:
-                    - id_rol: 1
-                      nombre: "Administrador"
-                    - id_rol: 2
-                      nombre: "Usuario"
     post:
       summary: Crear un nuevo rol
+      tags:
+        - Rol
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RolInput'
-            examples:
-              sample:
-                value:
-                  nombre: "Supervisor"
       responses:
         '201':
-          description: Rol creado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rol'
-              examples:
-                sample:
-                  value:
-                    id_rol: 3
-                    nombre: "Supervisor"
-
+          description: Rol creado exitosamente
   /rol/{id_rol}:
+    parameters:
+      - name: id_rol
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del rol
     get:
-      summary: Obtener un rol por ID
-      parameters:
-        - in: path
-          name: id_rol
-          required: true
-          schema:
-            type: integer
+      summary: Obtener rol por ID
+      tags:
+        - Rol
       responses:
         '200':
-          description: Detalle de rol
+          description: Detalles del rol
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Rol'
-              examples:
-                sample:
-                  value:
-                    id_rol: 1
-                    nombre: "Administrador"
-        '404':
-          description: Rol no encontrado
+    put:
+      summary: Actualizar rol existente
+      tags:
+        - Rol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RolInput'
+      responses:
+        '200':
+          description: Rol actualizado
+    delete:
+      summary: Eliminar un rol por ID
+      tags:
+        - Rol
+      responses:
+        '204':
+          description: Rol eliminado
 
+  # ============================================
+  # PERSONA
+  # ============================================
   /persona:
     get:
-      summary: Obtener todas las personas
+      summary: Obtener lista de personas
+      tags:
+        - Persona
       responses:
         '200':
           description: Lista de personas
@@ -90,255 +118,695 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Persona'
-              examples:
-                sample:
-                  value:
-                    - id_persona: 1
-                      nombre: "Juan"
-                      primer_apellido: "Perez"
-                      segundo_apellido: "Lopez"
-                      numero_ci: "1234567"
-                      complemento_ci: "LP"
-                      correo: "juan@example.com"
-                      telefono: "12345678"
-                      direccion: "Calle Falsa 123"
     post:
       summary: Crear una nueva persona
+      tags:
+        - Persona
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PersonaInput'
-            examples:
-              sample:
-                value:
-                  nombre: "Maria"
-                  primer_apellido: "Gomez"
-                  segundo_apellido: "Diaz"
-                  numero_ci: "7654321"
-                  complemento_ci: "SC"
-                  correo: "maria@example.com"
-                  telefono: "87654321"
-                  direccion: "Av. Siempre Viva 742"
       responses:
         '201':
-          description: Persona creada
+          description: Persona creada exitosamente
+
+  /persona/{id_persona}:
+    parameters:
+      - name: id_persona
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID de la persona
+    get:
+      summary: Obtener persona por ID
+      tags:
+        - Persona
+      responses:
+        '200':
+          description: Detalles de la persona
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Persona'
-              examples:
-                sample:
-                  value:
-                    id_persona: 2
-                    nombre: "Maria"
-                    primer_apellido: "Gomez"
-                    segundo_apellido: "Diaz"
-                    numero_ci: "7654321"
-                    complemento_ci: "SC"
-                    correo: "maria@example.com"
-                    telefono: "87654321"
-                    direccion: "Av. Siempre Viva 742"
-
-  /usuario:
-    post:
-      summary: Crear un nuevo usuario
+    put:
+      summary: Actualizar persona
+      tags:
+        - Persona
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UsuarioInput'
-            examples:
-              sample:
-                value:
-                  username: "juan123"
-                  password: "1234pass"
-                  id_rol: 1
+              $ref: '#/components/schemas/PersonaInput'
+      responses:
+        '200':
+          description: Persona actualizada
+    delete:
+      summary: Eliminar una persona
+      tags:
+        - Persona
+      responses:
+        '204':
+          description: Persona eliminada
+
+  # ============================================
+  # USUARIO
+  # ============================================
+  /usuario:
+    get:
+      summary: Obtener lista de usuarios
+      tags:
+        - Usuario
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+    post:
+      summary: Crear un nuevo usuario
+      tags:
+        - Usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioCreate'
       responses:
         '201':
-          description: Usuario creado
+          description: Usuario creado exitosamente
+
+  /usuario/{id_usuario}:
+    parameters:
+      - name: id_usuario
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del usuario (coincide con id_persona)
+    get:
+      summary: Obtener usuario por ID
+      tags:
+        - Usuario
+      responses:
+        '200':
+          description: Detalles del usuario
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Usuario'
-              examples:
-                sample:
-                  value:
-                    id_usuario: 1
-                    username: "juan123"
-                    password: "hashed_password"
-                    id_rol: 1
+    put:
+      summary: Actualizar usuario
+      tags:
+        - Usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioUpdate'
+      responses:
+        '200':
+          description: Usuario actualizado
+    delete:
+      summary: Eliminar un usuario
+      tags:
+        - Usuario
+      responses:
+        '204':
+          description: Usuario eliminado
 
+  # ============================================
+  # DISTRIBUIDOR
+  # ============================================
+  /distribuidor:
+    get:
+      summary: Obtener lista de distribuidores
+      tags:
+        - Distribuidor
+      responses:
+        '200':
+          description: Lista de distribuidores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Distribuidor'
+    post:
+      summary: Crear un nuevo distribuidor
+      tags:
+        - Distribuidor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DistribuidorInput'
+      responses:
+        '201':
+          description: Distribuidor creado exitosamente
+
+  /distribuidor/{id_distribuidor}:
+    parameters:
+      - name: id_distribuidor
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del distribuidor (coincide con id_persona)
+    get:
+      summary: Obtener distribuidor por ID
+      tags:
+        - Distribuidor
+      responses:
+        '200':
+          description: Detalles del distribuidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Distribuidor'
+    put:
+      summary: Actualizar distribuidor
+      tags:
+        - Distribuidor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DistribuidorInput'
+      responses:
+        '200':
+          description: Distribuidor actualizado
+    delete:
+      summary: Eliminar un distribuidor
+      tags:
+        - Distribuidor
+      responses:
+        '204':
+          description: Distribuidor eliminado
+
+  # ============================================
+  # PRODUCTO
+  # ============================================
   /producto:
+    get:
+      summary: Obtener lista de productos
+      tags:
+        - Producto
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Producto'
     post:
       summary: Crear un nuevo producto
+      tags:
+        - Producto
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductoInput'
-            examples:
-              sample:
-                value:
-                  codigo: "P001"
-                  nombre: "Laptop Dell"
-                  descripcion: "Laptop para oficina"
-                  unidad: "Unidad"
-                  id_distribuidor: 1
       responses:
         '201':
-          description: Producto creado
+          description: Producto creado exitosamente
+
+  /producto/{id_producto}:
+    parameters:
+      - name: id_producto
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del producto
+    get:
+      summary: Obtener producto por ID
+      tags:
+        - Producto
+      responses:
+        '200':
+          description: Detalles del producto
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Producto'
-              examples:
-                sample:
-                  value:
-                    id_producto: 1
-                    codigo: "P001"
-                    nombre: "Laptop Dell"
-                    descripcion: "Laptop para oficina"
-                    unidad: "Unidad"
-                    id_distribuidor: 1
-
-  /movimiento:
-    post:
-      summary: Crear un nuevo movimiento
+    put:
+      summary: Actualizar producto
+      tags:
+        - Producto
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovimientoInput'
-            examples:
-              sample:
-                value:
-                  id_producto: 1
-                  cantidad: 10
-                  tipo: "entrada"
-                  fecha: "2025-10-21T16:00:00"
+              $ref: '#/components/schemas/ProductoInput'
       responses:
-        '201':
-          description: Movimiento creado
+        '200':
+          description: Producto actualizado
+    delete:
+      summary: Eliminar un producto
+      tags:
+        - Producto
+      responses:
+        '204':
+          description: Producto eliminado
+
+  # ============================================
+  # DOCUMENTO
+  # ============================================
+  /documento:
+    get:
+      summary: Obtener lista de documentos
+      tags:
+        - Documento
+      responses:
+        '200':
+          description: Lista de documentos
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Movimiento'
-              examples:
-                sample:
-                  value:
-                    id_movimiento: 1
-                    id_producto: 1
-                    cantidad: 10
-                    tipo: "entrada"
-                    fecha: "2025-10-21T16:00:00"
+                type: array
+                items:
+                  $ref: '#/components/schemas/Documento'
+    post:
+      summary: Crear un nuevo documento
+      tags:
+        - Documento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentoInput'
+      responses:
+        '201':
+          description: Documento creado exitosamente
+
+  /documento/{id_documento}:
+    parameters:
+      - name: id_documento
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del documento
+    get:
+      summary: Obtener documento por ID
+      tags:
+        - Documento
+      responses:
+        '200':
+          description: Detalles del documento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Documento'
+    put:
+      summary: Actualizar documento
+      tags:
+        - Documento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentoInput'
+      responses:
+        '200':
+          description: Documento actualizado
+    delete:
+      summary: Eliminar un documento
+      tags:
+        - Documento
+      responses:
+        '204':
+          description: Documento eliminado
+
+  # ============================================
+  # MOVIMIENTO
+  # ============================================
+  /movimiento:
+    get:
+      summary: Obtener lista de movimientos
+      tags:
+        - Movimiento
+      responses:
+        '200':
+          description: Lista de movimientos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movimiento'
+    post:
+      summary: Crear un nuevo movimiento (Transacción)
+      tags:
+        - Movimiento
+      description: Crea un nuevo movimiento y sus items de kardex asociados.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovimientoFull' # Usa un esquema que incluye los items del kardex
+      responses:
+        '201':
+          description: Movimiento y sus items creados exitosamente
+
+  /movimiento/{id_movimiento}:
+    parameters:
+      - name: id_movimiento
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del movimiento
+    get:
+      summary: Obtener movimiento por ID (incluyendo items)
+      tags:
+        - Movimiento
+      responses:
+        '200':
+          description: Detalles del movimiento y sus items de kardex
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovimientoFull'
+
+  # ============================================
+  # CLIENTE
+  # ============================================
+  /cliente:
+    get:
+      summary: Obtener lista de clientes
+      tags:
+        - Cliente
+      responses:
+        '200':
+          description: Lista de clientes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cliente'
+    post:
+      summary: Crear un nuevo cliente
+      tags:
+        - Cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteInput'
+      responses:
+        '201':
+          description: Cliente creado exitosamente
+
+  /cliente/{id_cliente}:
+    parameters:
+      - name: id_cliente
+        in: path
+        required: true
+        schema:
+          type: integer
+          description: ID del cliente (coincide con id_persona)
+    get:
+      summary: Obtener cliente por ID
+      tags:
+        - Cliente
+      responses:
+        '200':
+          description: Detalles del cliente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cliente'
+    put:
+      summary: Actualizar cliente
+      tags:
+        - Cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClienteInput'
+      responses:
+        '200':
+          description: Cliente actualizado
+    delete:
+      summary: Eliminar un cliente
+      tags:
+        - Cliente
+      responses:
+        '204':
+          description: Cliente eliminado
+
+  # ============================================
+  # KARDEX (General)
+  # ============================================
+  /kardex:
+    get:
+      summary: Obtener registro general del kardex
+      tags:
+        - Kardex
+      description: Permite obtener todos los registros del kardex, idealmente con filtros de producto o fecha.
+      responses:
+        '200':
+          description: Lista de registros del kardex
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Kardex'
 
 components:
   schemas:
+    # ---------------------------------------------
+    # 1. ROL
+    # ---------------------------------------------
     Rol:
       type: object
+      description: Modelo de Rol.
       properties:
         id_rol:
           type: integer
+          description: ID único del rol.
+          readOnly: true
         nombre:
           type: string
+          description: Nombre descriptivo del rol.
+      required:
+        - id_rol
+        - nombre
     RolInput:
       type: object
+      description: Datos necesarios para crear o actualizar un Rol.
       properties:
         nombre:
           type: string
+          description: Nombre descriptivo del rol.
       required:
         - nombre
 
+    # ---------------------------------------------
+    # 2. PERSONA
+    # ---------------------------------------------
     Persona:
       type: object
+      description: Modelo de Persona (base para Usuario, Distribuidor y Cliente).
       properties:
         id_persona:
           type: integer
+          description: ID único de la persona.
+          readOnly: true
         nombre:
           type: string
+          description: Nombre de pila.
         primer_apellido:
           type: string
         segundo_apellido:
           type: string
         numero_ci:
-          type: string
+          type: integer
+          description: Número de Cédula de Identidad.
         complemento_ci:
           type: string
         correo:
           type: string
-        telefono:
-          type: string
-        direccion:
-          type: string
-    PersonaInput:
-      type: object
-      properties:
-        nombre:
-          type: string
-        primer_apellido:
-          type: string
-        segundo_apellido:
-          type: string
-        numero_ci:
-          type: string
-        complemento_ci:
-          type: string
-        correo:
-          type: string
+          format: email
+          description: Correo electrónico único.
         telefono:
           type: string
         direccion:
           type: string
       required:
         - nombre
+        - numero_ci
+        - correo
+    PersonaInput:
+      allOf:
+        - $ref: '#/components/schemas/Persona'
+        - properties:
+            id_persona:
+              readOnly: false
+            # Las propiedades para crear/actualizar son las mismas que Persona, excepto id_persona no es requerido.
+          required:
+            - nombre
+            - numero_ci
+            - correo
 
+    # ---------------------------------------------
+    # 3. USUARIO
+    # ---------------------------------------------
     Usuario:
       type: object
+      description: Modelo de Usuario, hereda de Persona.
       properties:
         id_usuario:
           type: integer
+          description: ID del usuario (FK a Persona).
+          readOnly: true
         username:
           type: string
-        password:
-          type: string
+          description: Nombre de usuario único para el login.
         id_rol:
           type: integer
-    UsuarioInput:
+          description: ID del rol asignado (FK a Rol).
+        # Agrega campos de Persona para obtener una vista completa
+        nombre:
+          type: string
+        primer_apellido:
+          type: string
+        correo:
+          type: string
+      required:
+        - id_usuario
+        - username
+        - id_rol
+    UsuarioCreate:
       type: object
+      description: Datos necesarios para crear un nuevo usuario.
       properties:
+        id_persona:
+          type: integer
+          description: ID de una Persona ya existente.
         username:
           type: string
         password:
           type: string
+          format: password
+          writeOnly: true
         id_rol:
           type: integer
       required:
+        - id_persona
         - username
         - password
         - id_rol
+    UsuarioUpdate:
+      type: object
+      description: Datos para actualizar un usuario.
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+          writeOnly: true
+        id_rol:
+          type: integer
 
+    # ---------------------------------------------
+    # 4. DISTRIBUIDOR
+    # ---------------------------------------------
+    Distribuidor:
+      type: object
+      description: Modelo de Distribuidor, hereda de Persona.
+      properties:
+        id_distribuidor:
+          type: integer
+          description: ID del distribuidor (FK a Persona).
+          readOnly: true
+        empresa:
+          type: string
+          description: Nombre de la empresa distribuidora (Único).
+        # Agrega campos de Persona para una vista completa
+        nombre:
+          type: string
+        correo:
+          type: string
+      required:
+        - id_distribuidor
+        - empresa
+    DistribuidorInput:
+      type: object
+      description: Datos para crear un distribuidor (asume que la persona ya existe o se crea con los datos de persona).
+      properties:
+        id_persona:
+          type: integer
+          description: ID de una Persona ya existente.
+        empresa:
+          type: string
+      required:
+        - id_persona
+        - empresa
+
+    # ---------------------------------------------
+    # 5. PRODUCTO
+    # ---------------------------------------------
     Producto:
       type: object
+      description: Modelo de Producto.
       properties:
         id_producto:
           type: integer
+          description: ID único del producto.
+          readOnly: true
         codigo:
           type: string
+          description: Código del producto (Único).
         nombre:
           type: string
         descripcion:
           type: string
         unidad:
           type: string
+          description: Unidad de medida (ej. 'Kg', 'Lt', 'Unidad').
+        precio_base:
+          type: number
+          format: float
+          description: Precio base de venta.
         id_distribuidor:
           type: integer
+          description: ID del distribuidor (FK a Distribuidor).
+      required:
+        - id_producto
+        - codigo
+        - nombre
+        - precio_base
+        - id_distribuidor
     ProductoInput:
       type: object
+      description: Datos para crear/actualizar un producto.
       properties:
         codigo:
           type: string
@@ -348,39 +816,189 @@ components:
           type: string
         unidad:
           type: string
+        precio_base:
+          type: number
+          format: float
         id_distribuidor:
           type: integer
       required:
+        - codigo
         - nombre
+        - precio_base
         - id_distribuidor
 
-    Movimiento:
+    # ---------------------------------------------
+    # 6. DOCUMENTO
+    # ---------------------------------------------
+    Documento:
       type: object
+      description: Modelo de Documento (ej. Factura, Nota de Venta).
+      properties:
+        id_documento:
+          type: integer
+          description: ID único.
+          readOnly: true
+        nombre:
+          type: string
+        tipo:
+          type: string
+          maxLength: 1
+          description: Tipo de documento (ej. 'F' para Factura, 'N' para Nota).
+      required:
+        - id_documento
+        - nombre
+        - tipo
+    DocumentoInput:
+      type: object
+      description: Datos para crear/actualizar un documento.
+      properties:
+        nombre:
+          type: string
+        tipo:
+          type: string
+          maxLength: 1
+      required:
+        - nombre
+        - tipo
+
+    # ---------------------------------------------
+    # 7. CLIENTE
+    # ---------------------------------------------
+    Cliente:
+      type: object
+      description: Modelo de Cliente, hereda de Persona.
+      properties:
+        id_cliente:
+          type: integer
+          description: ID del cliente (FK a Persona).
+          readOnly: true
+        tipo:
+          type: string
+          maxLength: 1
+          description: Tipo de cliente ('P' para Persona, 'J' para Jurídica).
+          enum:
+            - P
+            - J
+        # Agrega campos de Persona para una vista completa
+        nombre:
+          type: string
+        correo:
+          type: string
+      required:
+        - id_cliente
+        - tipo
+    ClienteInput:
+      type: object
+      description: Datos para crear un cliente (asume que la persona ya existe o se crea con los datos de persona).
+      properties:
+        id_persona:
+          type: integer
+          description: ID de una Persona ya existente.
+        tipo:
+          type: string
+          maxLength: 1
+          enum:
+            - P
+            - J
+      required:
+        - id_persona
+        - tipo
+
+    # ---------------------------------------------
+    # 8. KARDEX (Item de Movimiento)
+    # ---------------------------------------------
+    Kardex:
+      type: object
+      description: Detalle de un producto en un movimiento.
       properties:
         id_movimiento:
           type: integer
+          description: ID del movimiento al que pertenece.
         id_producto:
           type: integer
+          description: ID del producto involucrado.
         cantidad:
           type: number
-        tipo:
-          type: string
-        fecha:
-          type: string
-          format: date-time
-    MovimientoInput:
+          format: float
+        unitario:
+          type: number
+          format: float
+          description: Precio unitario al momento del movimiento.
+        subtotal:
+          type: number
+          format: float
+      required:
+        - id_movimiento
+        - id_producto
+        - cantidad
+        - unitario
+        - subtotal
+    KardexInput:
       type: object
+      description: Datos de un item de kardex para incluir en un Movimiento.
       properties:
         id_producto:
           type: integer
         cantidad:
           type: number
-        tipo:
-          type: string
-        fecha:
-          type: string
-          format: date-time
+          format: float
+        unitario:
+          type: number
+          format: float
       required:
         - id_producto
         - cantidad
+        - unitario
+
+    # ---------------------------------------------
+    # 9. MOVIMIENTO
+    # ---------------------------------------------
+    Movimiento:
+      type: object
+      description: Encabezado de un Movimiento (ej. Venta, Compra, Ajuste).
+      properties:
+        id_movimiento:
+          type: integer
+          description: ID único.
+          readOnly: true
+        tipo:
+          type: string
+          maxLength: 1
+          description: Tipo de movimiento ('E' para Entrada, 'S' para Salida).
+          enum:
+            - E
+            - S
+        fecha:
+          type: string
+          format: date-time
+        glosa:
+          type: string
+        observacion:
+          type: string
+        id_elaborador:
+          type: integer
+          description: ID del usuario que elabora el movimiento (FK a Usuario).
+        id_cliente:
+          type: integer
+          description: ID del cliente involucrado (FK a Cliente).
+        id_documento:
+          type: integer
+          description: ID del documento asociado (FK a Documento).
+      required:
         - tipo
+        - fecha
+        - id_elaborador
+
+    MovimientoFull:
+      type: object
+      description: Representación completa de un Movimiento, incluyendo sus detalles de Kardex.
+      allOf:
+        - $ref: '#/components/schemas/Movimiento'
+        - properties:
+            kardex_items:
+              type: array
+              description: Lista de los productos involucrados en este movimiento.
+              items:
+                $ref: '#/components/schemas/KardexInput'
+          required:
+            - kardex_items
