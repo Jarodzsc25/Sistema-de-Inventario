@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import sys
-import re   # 🔹 Para expresiones regulares
+import re   # Para expresiones regulares
 from security import token_required
 
 persona_bp = Blueprint('persona_bp', __name__)
@@ -23,7 +23,8 @@ def get_persona_fields(data):
         data.get('direccion')
     )
 
-# --- 🔹 Función de validación ---
+
+# --- Función de validación ---
 def validar_datos_persona(numero_ci, telefono, correo):
     errores = []
 
@@ -41,7 +42,9 @@ def validar_datos_persona(numero_ci, telefono, correo):
             "gmail.com", "outlook.com", "hotmail.com",
             "live.com", "yahoo.com", "icloud.com", "protonmail.com"
         ]
-        patron_correo = re.compile(r'^[\w\.-]+@(' + '|'.join(dominios_validos).replace('.', r'\.') + r')$')
+        patron_correo = re.compile(
+            r'^[\w\.-]+@(' + '|'.join(dominios_validos).replace('.', r'\.') + r')$'
+        )
 
         if not patron_correo.fullmatch(correo.strip().lower()):
             errores.append("El correo debe tener un dominio válido: " + ", ".join(dominios_validos))
@@ -61,10 +64,17 @@ def handle_personas():
         if not nombre:
             return jsonify({"error": "El campo 'nombre' es obligatorio."}), 400
 
-        # 🔹 Validar CI, teléfono y correo
+        # Validar CI, teléfono y correo
         errores = validar_datos_persona(numero_ci, telefono, correo)
         if errores:
             return jsonify({"errores": errores}), 400
+
+        # Verificar si el correo ya existe
+        if correo:
+            check_email_sql = "SELECT id_persona FROM persona WHERE correo = %s"
+            existing_email = execute_query(check_email_sql, (correo,), fetch=True)
+            if existing_email:
+                return jsonify({"error": "El correo ya está registrado en otra persona."}), 400
 
         sql = """
             INSERT INTO persona (nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion)
@@ -144,10 +154,17 @@ def handle_persona(id_persona):
         if not nombre:
             return jsonify({"error": "El campo 'nombre' es obligatorio."}), 400
 
-        # 🔹 Validar CI, teléfono y correo antes de actualizar
+        # Validar CI, teléfono y correo antes de actualizar
         errores = validar_datos_persona(numero_ci, telefono, correo)
         if errores:
             return jsonify({"errores": errores}), 400
+
+        # Verificar si el nuevo correo ya está en uso por otra persona
+        if correo:
+            check_email_sql = "SELECT id_persona FROM persona WHERE correo = %s AND id_persona <> %s"
+            existing_email = execute_query(check_email_sql, (correo, id_persona), fetch=True)
+            if existing_email:
+                return jsonify({"error": "El correo ya está registrado en otra persona."}), 400
 
         sql = """
             UPDATE persona SET 
