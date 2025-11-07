@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se volvio a configurar el openapi.yaml">
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se completo la restriccion de urls con tokens de mis tablas.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/movimiento.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/movimiento.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/producto.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/producto.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentos/Proyecto Final.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/persona.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -493,7 +493,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762179753656</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="se completo la restriccion de urls con tokens de mis tablas.">
+      <option name="closed" value="true" />
+      <created>1762196989650</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1762196989650</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -511,7 +519,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="se movio todos los archivos para un mejor control" />
     <MESSAGE value="se consiguio la conexion con postman nuevamente" />
     <MESSAGE value="se consiguio iniciar sesion con usuario y tener las contrseñas incriptadas" />
     <MESSAGE value="se creo una interfas simple para facilitar el uso del programa y tambien porque dio flojera usar postman todo el rato" />
@@ -536,7 +543,8 @@
     <MESSAGE value="se volvio a configurar el readme.md" />
     <MESSAGE value="se volvio a configurar el readme.md, olvide mi url" />
     <MESSAGE value="se volvio a configurar el openapi.yaml" />
-    <option name="LAST_COMMIT_MESSAGE" value="se volvio a configurar el openapi.yaml" />
+    <MESSAGE value="se completo la restriccion de urls con tokens de mis tablas." />
+    <option name="LAST_COMMIT_MESSAGE" value="se completo la restriccion de urls con tokens de mis tablas." />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

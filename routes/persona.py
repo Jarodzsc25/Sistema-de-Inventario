@@ -1,10 +1,9 @@
 from flask import Blueprint, request, jsonify
 from db_config import execute_query
 import sys
-# --- AÑADIDO: Importar decorador de seguridad ---
+import re   # 🔹 Para expresiones regulares
 from security import token_required
 
-# Define el Blueprint para las rutas de Persona
 persona_bp = Blueprint('persona_bp', __name__)
 
 # --- Función de utilidad ---
@@ -24,18 +23,48 @@ def get_persona_fields(data):
         data.get('direccion')
     )
 
+# --- 🔹 Función de validación ---
+def validar_datos_persona(numero_ci, telefono, correo):
+    errores = []
+
+    # Validar CI (solo 8 dígitos)
+    if numero_ci and not re.fullmatch(r'\d{8}', str(numero_ci)):
+        errores.append("El número de CI debe contener exactamente 8 dígitos.")
+
+    # Validar teléfono (solo 8 dígitos)
+    if telefono and not re.fullmatch(r'\d{8}', str(telefono)):
+        errores.append("El teléfono debe contener exactamente 8 dígitos.")
+
+    # Validar correo con dominios permitidos
+    if correo:
+        dominios_validos = [
+            "gmail.com", "outlook.com", "hotmail.com",
+            "live.com", "yahoo.com", "icloud.com", "protonmail.com"
+        ]
+        patron_correo = re.compile(r'^[\w\.-]+@(' + '|'.join(dominios_validos).replace('.', r'\.') + r')$')
+
+        if not patron_correo.fullmatch(correo.strip().lower()):
+            errores.append("El correo debe tener un dominio válido: " + ", ".join(dominios_validos))
+
+    return errores
+
+
 # --- GET ALL / POST ---
 @persona_bp.route('/', methods=['GET', 'POST'])
-@token_required # PROTEGIDO
+@token_required
 def handle_personas():
     if request.method == 'POST':
-        # --- CREATE ---
         data = request.get_json()
         nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion = get_persona_fields(data)
-        es_cliente = data.get('es_cliente', False) # <-- Nuevo campo
+        es_cliente = data.get('es_cliente', False)
 
         if not nombre:
             return jsonify({"error": "El campo 'nombre' es obligatorio."}), 400
+
+        # 🔹 Validar CI, teléfono y correo
+        errores = validar_datos_persona(numero_ci, telefono, correo)
+        if errores:
+            return jsonify({"errores": errores}), 400
 
         sql = """
             INSERT INTO persona (nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion)
@@ -45,16 +74,13 @@ def handle_personas():
         params = (nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion)
 
         try:
-            # Crear persona
             results = execute_query(sql, params, fetch=True)
             id_persona = results[0]['id_persona']
 
-            # Crear cliente si es_cliente es True
             if es_cliente:
                 sql_cliente = "INSERT INTO cliente (id_persona) VALUES (%s)"
                 execute_query(sql_cliente, (id_persona,))
 
-            # Recuperar persona con es_cliente
             persona_sql = """
                 SELECT p.*, 
                         CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
@@ -74,7 +100,6 @@ def handle_personas():
             return jsonify({"error": "Error al crear persona", "detalle": str(e)}), 400
 
     else:
-        # --- READ ALL ---
         sql = """
             SELECT p.*, 
                     CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
@@ -92,10 +117,9 @@ def handle_personas():
 
 # --- GET / PUT / DELETE por id_persona ---
 @persona_bp.route('/<int:id_persona>', methods=['GET', 'PUT', 'DELETE'])
-@token_required # PROTEGIDO
+@token_required
 def handle_persona(id_persona):
     if request.method == 'GET':
-        # --- READ ONE ---
         sql = """
             SELECT p.*, 
                     CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
@@ -113,13 +137,17 @@ def handle_persona(id_persona):
             return jsonify({"error": "Error al obtener persona", "detalle": str(e)}), 500
 
     elif request.method == 'PUT':
-        # --- UPDATE ---
         data = request.get_json()
         nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion = get_persona_fields(data)
         es_cliente = data.get('es_cliente', False)
 
         if not nombre:
             return jsonify({"error": "El campo 'nombre' es obligatorio."}), 400
+
+        # 🔹 Validar CI, teléfono y correo antes de actualizar
+        errores = validar_datos_persona(numero_ci, telefono, correo)
+        if errores:
+            return jsonify({"errores": errores}), 400
 
         sql = """
             UPDATE persona SET 
@@ -133,19 +161,15 @@ def handle_persona(id_persona):
         try:
             row_count = execute_query(sql, params)
 
-            # Actualizar tabla cliente
             if es_cliente:
-                # Si no existe como cliente, insertarlo
                 check_sql = "SELECT id_cliente FROM cliente WHERE id_persona = %s"
                 exists = execute_query(check_sql, (id_persona,), fetch=True)
                 if not exists:
                     execute_query("INSERT INTO cliente (id_persona) VALUES (%s)", (id_persona,))
             else:
-                # Si es False, eliminar de cliente si existe
                 execute_query("DELETE FROM cliente WHERE id_persona = %s", (id_persona,))
 
             if row_count and row_count > 0:
-                # Devolver persona actualizada
                 persona_sql = """
                     SELECT p.*, 
                             CASE WHEN c.id_cliente IS NOT NULL THEN TRUE ELSE FALSE END AS es_cliente
@@ -162,11 +186,8 @@ def handle_persona(id_persona):
             return jsonify({"error": "Error al actualizar persona", "detalle": str(e)}), 400
 
     elif request.method == 'DELETE':
-        # --- DELETE ---
         try:
-            # Primero borrar de cliente
             execute_query("DELETE FROM cliente WHERE id_persona = %s", (id_persona,))
-            # Luego borrar persona
             row_count = execute_query("DELETE FROM persona WHERE id_persona = %s", (id_persona,))
             if row_count and row_count > 0:
                 return jsonify({"mensaje": "Persona eliminada con éxito.", "id_persona": id_persona}), 200
