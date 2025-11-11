@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone  # Necesario para la función
 app = Flask(__name__)
 CORS(app)
 app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'Vc0_9PB-iyi8W0ouFZtJpOLoZfVH-8Q9ChYrGOkU90s'
+app.config['SECRET_KEY'] = 'W3xift9CvOyeE_-O-lp_R2QKxrspSJ5WH51-K8ItWG4'
 
 # --- IMPORTAR BLUEPRINTS DESPUÉS DE LA CONFIGURACIÓN ---
 # ... (Las importaciones de tus blueprints) ...

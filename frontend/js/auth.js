@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 3. Inicialización del Dashboard (Control de sesión y rol)
-    // Se ejecuta al cargar dashboard.html para verificar la sesión.
     if (window.location.pathname.endsWith('dashboard.html')) {
         initializeDashboard();
     }
@@ -35,35 +34,44 @@ async function handleLogin(e) {
     errorMsg.textContent = ''; // Limpiar mensajes de error previos
 
     try {
-        // Asumiendo que loginUser existe en api.js
+        // Llama a loginUser en api.js. Si falla (401), lanzará un error.
         const responseData = await loginUser(username, password);
 
-        // Verifica si la API retornó un usuario válido Y EL TOKEN
-        if (responseData && responseData.usuario && responseData.token) { // <--- MODIFICACIÓN CLAVE
-            // Guarda el objeto completo del usuario.
-            localStorage.setItem('user', JSON.stringify(responseData.usuario));
+        // Si llega aquí, la petición fue 200 OK (Manejo de éxito)
+        if (responseData && responseData.usuario && responseData.token) {
 
-            // **CLAVE:** Guarda el token JWT para usarlo en futuras peticiones protegidas.
-            localStorage.setItem('token', responseData.token); // <--- NUEVA LÍNEA
+            // Guarda el objeto completo del usuario y el token
+            localStorage.setItem('user', JSON.stringify(responseData.usuario));
+            localStorage.setItem('token', responseData.token);
 
             // Redirigir al dashboard
             window.location.href = 'dashboard.html';
 
         } else {
-            // Credenciales incorrectas o API devolvió error sin lanzar excepción
-            errorMsg.textContent = 'Error: Credenciales inválidas. Intente de nuevo.';
+            // Este caso es muy improbable si api.js lanza errores correctamente,
+            // pero lo dejamos como fallback.
+            errorMsg.textContent = 'Error: Respuesta inesperada del servidor. Intente de nuevo.';
         }
 
     } catch (error) {
+        // === 🛑 CORRECCIÓN CLAVE AQUÍ 🛑 ===
+
         console.error('Error durante el login:', error);
-        // Error de red, CORS, o API no encontrada (404/500)
-        errorMsg.textContent = 'Error de conexión con el servidor. Verifique la API.';
+
+        // Verifica si el mensaje de error incluye el código 401
+        if (error.message.includes('401')) {
+            // Error específico de autenticación fallida (credenciales incorrectas)
+            errorMsg.textContent = 'Credenciales inválidas. Verifique su usuario y contraseña.';
+        } else {
+            // Error de red, CORS, o API no encontrada (404/500), etc.
+            errorMsg.textContent = 'Error de conexión con el servidor. Verifique que la API esté activa.';
+        }
     }
 }
 
 function handleLogout() {
     localStorage.removeItem('user');
-    localStorage.removeItem('token'); // <--- ELIMINAR TAMBIÉN EL TOKEN
+    localStorage.removeItem('token');
     window.location.href = 'index.html';
 }
 
