@@ -17,7 +17,7 @@ def get_persona_fields(data):
         data.get('primer_apellido'),
         data.get('segundo_apellido'),
         data.get('numero_ci'),
-        data.get('complemento_ci'),
+        data.get('expedido'),
         data.get('correo'),
         data.get('telefono'),
         data.get('direccion')
@@ -77,7 +77,7 @@ def handle_personas():
                 return jsonify({"error": "El correo ya está registrado en otra persona."}), 400
 
         sql = """
-            INSERT INTO persona (nombre, primer_apellido, segundo_apellido, numero_ci, complemento_ci, correo, telefono, direccion)
+            INSERT INTO persona (nombre, primer_apellido, segundo_apellido, numero_ci, expedido, correo, telefono, direccion)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id_persona
         """
@@ -169,7 +169,7 @@ def handle_persona(id_persona):
         sql = """
             UPDATE persona SET 
                 nombre = %s, primer_apellido = %s, segundo_apellido = %s,
-                numero_ci = %s, complemento_ci = %s, correo = %s,
+                numero_ci = %s, expedido = %s, correo = %s,
                 telefono = %s, direccion = %s 
             WHERE id_persona = %s
         """

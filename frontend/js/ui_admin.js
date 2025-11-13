@@ -160,7 +160,7 @@ async function mostrarFormularioPersona(persona = null) {
       </div>
       <div class="row">
         <div class="col-md-8 mb-3"><label>Número CI</label><input type="number" class="form-control" id="numero_ci" value="${persona?.numero_ci || ''}"></div>
-        <div class="col-md-4 mb-3"><label>Complemento CI</label><input type="text" maxlength="2" class="form-control" id="complemento_ci" value="${persona?.complemento_ci || ''}"></div>
+        <div class="col-md-4 mb-3"><label>Expedido</label><input type="text" maxlength="2" class="form-control" id="expedido" value="${persona?.expedido || ''}"></div>
       </div>
       <div class="row">
         <div class="col-md-6 mb-3"><label>Correo</label><input type="email" class="form-control" id="correo" value="${persona?.correo || ''}"></div>
@@ -180,7 +180,7 @@ async function mostrarFormularioPersona(persona = null) {
       primer_apellido: document.getElementById("primer_apellido").value.trim() || null,
       segundo_apellido: document.getElementById("segundo_apellido").value.trim() || null,
       numero_ci: document.getElementById("numero_ci").value ? parseInt(document.getElementById("numero_ci").value, 10) : null,
-      complemento_ci: document.getElementById("complemento_ci").value.trim() || null,
+      complemento_ci: document.getElementById("expedido").value.trim() || null,
       correo: document.getElementById("correo").value.trim() || null,
       telefono: document.getElementById("telefono").value.trim() || null,
       direccion: document.getElementById("direccion").value.trim() || null,
