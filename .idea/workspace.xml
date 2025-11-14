@@ -6,10 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se dieron los ultimos cambios">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/db_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/api.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/js/ui_admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/persona.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/kardex.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/kardex.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,14 +150,6 @@
       <workItem from="1760296525183" duration="3494000" />
       <workItem from="1760452231038" duration="3356000" />
       <workItem from="1760559293097" duration="48000" />
-    </task>
-    <task id="LOCAL-00001" summary="guardar carpeta">
-      <option name="closed" value="true" />
-      <created>1759604013270</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1759604013270</updated>
     </task>
     <task id="LOCAL-00002" summary="guardar conexion">
       <option name="closed" value="true" />
@@ -542,7 +535,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762870703612</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="se dieron los ultimos cambios">
+      <option name="closed" value="true" />
+      <created>1763063753288</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1763063753288</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

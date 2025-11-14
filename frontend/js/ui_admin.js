@@ -370,3 +370,232 @@ async function mostrarFormularioProducto(producto = null, distribuidores = []) {
     document.getElementById("menuProductos").click();
   });
 }
+
+// --------------------------------------------------------------------
+// === NUEVAS FUNCIONALIDADES: MOVIMIENTOS (CRUD) Y KARDEX (REPORTE) ===
+// --------------------------------------------------------------------
+
+// ====================================================================
+// === LÓGICA DE GESTIÓN DE MOVIMIENTOS (CRUD) ===
+// ====================================================================
+
+/**
+ * Manejador de clic en el menú "Movimientos" e Inicializa la vista de lista de movimientos.
+ */
+document.getElementById("menuMovimientos")?.addEventListener("click", async () => {
+    renderMovimientoList();
+});
+
+/**
+ * Renderiza la lista de movimientos con botones de CRUD.
+ */
+async function renderMovimientoList() {
+    document.getElementById("contentArea").innerHTML = '<h4>Cargando Movimientos...</h4>';
+    try {
+        const movimientos = await getMovimientos();
+
+        const html = `
+            <h4>Gestión de Movimientos</h4>
+            <button id="btnCrearMovimiento" class="btn btn-success mb-3">Crear Nuevo Movimiento</button>
+            <table class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tipo</th>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Fecha</th>
+                  <th>Glosa</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${movimientos
+                  .map(
+                    (m) =>
+                      `<tr>
+                        <td>${m.id_movimiento}</td>
+                        <td class="${m.tipo === 'ENTRADA' ? 'text-success' : 'text-danger'}">${m.tipo}</td>
+                        <td>${m.producto_nombre || 'N/A'}</td>
+                        <td>${m.cantidad}</td>
+                        <td>${new Date(m.fecha).toLocaleDateString()}</td>
+                        <td>${m.glosa || ''}</td>
+                        <td>
+                          <button class="btn btn-sm btn-info btn-edit-mov" data-id="${m.id_movimiento}">Editar</button>
+                          <button class="btn btn-sm btn-danger btn-delete-mov" data-id="${m.id_movimiento}">Eliminar</button>
+                        </td>
+                      </tr>`
+                  )
+                  .join("")}
+              </tbody>
+            </table>`;
+
+        document.getElementById("contentArea").innerHTML = html;
+
+        // --- Eventos de Botones de CRUD ---
+        document.getElementById("btnCrearMovimiento").addEventListener("click", () => renderMovimientoForm());
+
+        document.querySelectorAll(".btn-edit-mov").forEach(button => {
+            button.addEventListener("click", async (e) => {
+                const id = e.target.getAttribute("data-id");
+                const movimiento = await getMovimiento(id);
+                renderMovimientoForm(movimiento);
+            });
+        });
+
+        document.querySelectorAll(".btn-delete-mov").forEach(button => {
+            button.addEventListener("click", async (e) => {
+                const id = e.target.getAttribute("data-id");
+                if (confirm(`¿Seguro que deseas eliminar el movimiento ID ${id}? (Esta acción puede afectar el inventario)`)) {
+                    await deleteMovimiento(id);
+                    alert("Movimiento eliminado con éxito.");
+                    renderMovimientoList();
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error("Error al cargar movimientos:", error);
+        document.getElementById("contentArea").innerHTML = `<div class="alert alert-danger">Error al cargar movimientos: ${error.message}</div>`;
+    }
+}
+
+/**
+ * Renderiza el formulario de creación o edición de Movimiento.
+ * @param {object} movimiento - Objeto movimiento si es edición, null si es creación.
+ */
+async function renderMovimientoForm(movimiento = null) {
+    const isEdit = movimiento !== null;
+    const title = isEdit ? `Editar Movimiento #${movimiento.id_movimiento}` : "➕ Crear Nuevo Movimiento";
+
+    const htmlForm = `
+        <h4>${title}</h4>
+        <form id="movimientoForm">
+            <input type="hidden" id="movimientoId" value="${isEdit ? movimiento.id_movimiento : ''}">
+
+            <div class="mb-3">
+                <label for="tipoMovimiento" class="form-label">Tipo de Movimiento</label>
+                <select class="form-select" id="tipoMovimiento" required>
+                    <option value="">Seleccione...</option>
+                    <option value="ENTRADA" ${isEdit && movimiento.tipo === 'ENTRADA' ? 'selected' : ''}>ENTRADA</option>
+                    <option value="SALIDA" ${isEdit && movimiento.tipo === 'SALIDA' ? 'selected' : ''}>SALIDA</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="idProducto" class="form-label">Producto (ID)</label>
+                <input type="number" class="form-control" id="idProducto" required min="1"
+                       value="${isEdit ? movimiento.id_producto : ''}">
+            </div>
+
+            <div class="mb-3">
+                <label for="cantidad" class="form-label">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad" required min="1"
+                       value="${isEdit ? movimiento.cantidad : ''}">
+            </div>
+
+            <div class="mb-3">
+                <label for="glosa" class="form-label">Glosa/Descripción</label>
+                <input type="text" class="form-control" id="glosa" required
+                       value="${isEdit ? movimiento.glosa : ''}">
+            </div>
+
+            <button type="submit" class="btn btn-primary">${isEdit ? 'Guardar Cambios' : 'Crear Movimiento'}</button>
+            <button type="button" class="btn btn-secondary" onclick="renderMovimientoList()">Cancelar</button>
+        </form>`;
+
+    document.getElementById("contentArea").innerHTML = htmlForm;
+
+    // --- Lógica de envío del Formulario ---
+    document.getElementById("movimientoForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById("movimientoId").value;
+        const data = {
+            // Nota: Tu DB usa CHAR(1). Tu backend debe mapear 'ENTRADA' a 'C'/'E' y 'SALIDA' a 'V'/'S'
+            tipo: document.getElementById("tipoMovimiento").value,
+            id_producto: parseInt(document.getElementById("idProducto").value),
+            cantidad: parseInt(document.getElementById("cantidad").value),
+            glosa: document.getElementById("glosa").value,
+        };
+
+        try {
+            if (id) {
+                await updateMovimiento(id, data);
+                alert("Movimiento actualizado correctamente.");
+            } else {
+                await createMovimiento(data);
+                alert("Movimiento creado correctamente.");
+            }
+            renderMovimientoList(); // Volver a la lista
+        } catch (error) {
+            console.error("Error al guardar movimiento:", error);
+            alert(`Error al guardar el movimiento. Revisa la consola o los datos ingresados: ${error.message}`);
+        }
+    });
+}
+
+
+// ====================================================================
+// === LÓGICA DE VISUALIZACIÓN DE KARDEX (REPORTE/READ) - CONSOLIDADA ===
+// ====================================================================
+
+/**
+ * Manejador de clic en el menú "Kardex" y Renderiza el reporte.
+ * NOTA: Usa getKardex() de api.js
+ */
+document.getElementById("menuKardex")?.addEventListener("click", renderKardexReporte);
+
+
+async function renderKardexReporte() {
+    const content = document.getElementById("contentArea");
+    content.innerHTML = `<h4>Reporte de Kardex</h4><div id="kardexTableContainer">Cargando reporte...</div>`;
+
+    try {
+        // Usar getKardex() (singular) de api.js
+        const kardex = await getKardex();
+
+        const html = `
+            <p class="text-info">El reporte de Kardex muestra todos los movimientos de inventario por producto.</p>
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th>ID Mov.</th>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Glosa</th>
+                        <th>Tipo</th>
+                        <th class="text-success">ENTRADA</th>
+                        <th class="text-danger">SALIDA</th>
+                        <th>Saldo Final</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${kardex
+                        .map(
+                            (k) =>
+                                `<tr>
+                                    <td>${k.id_movimiento}</td>
+                                    <td>${new Date(k.fecha).toLocaleDateString()}</td>
+                                    <td>${k.producto_nombre}</td>
+                                    <td>${k.glosa}</td>
+                                    <td>${k.tipo_movimiento}</td>
+                                    <td class="text-success">${k.cantidad_entrada !== null ? k.cantidad_entrada : ''}</td>
+                                    <td class="text-danger">${k.cantidad_salida !== null ? k.cantidad_salida : ''}</td>
+                                    <td>${k.saldo_final !== null ? k.saldo_final : 'N/A'}</td>
+                                    <td>${k.subtotal}</td>
+                                </tr>`
+                        )
+                        .join("")}
+                </tbody>
+            </table>
+        `;
+        document.getElementById("kardexTableContainer").innerHTML = html;
+
+    } catch (error) {
+        console.error("Error al cargar Kardex:", error);
+        // Mostrar un mensaje de error más útil, incluyendo el mensaje de la excepción de la API
+        document.getElementById("kardexTableContainer").innerHTML = `<div class="alert alert-danger">Error al cargar el reporte de Kardex: ${error.message || 'Verifica el servidor o la consola para detalles.'}</div>`;
+    }
+}

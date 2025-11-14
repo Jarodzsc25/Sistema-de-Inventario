@@ -24,12 +24,19 @@ function getAuthHeaders(contentType = "application/json") {
 // =====================================
 // 2. FUNCIÓN AUXILIAR: Maneja la respuesta de la API (Éxito o Error)
 async function handleResponse(res) {
-    // Si la respuesta NO es OK (ej. 401, 403, 404, 500), lanza un error
+    // 🛑 CORRECCIÓN CLAVE: Clona la respuesta para leer el cuerpo
+    // sin afectar el flujo si res.json() falla.
+    const clonedRes = res.clone();
+
+    // 1. Manejo de Errores (4xx, 5xx)
     if (!res.ok) {
         // Intenta obtener el error del cuerpo JSON (si está disponible)
-        const errorData = await res.json().catch(() => ({ message: res.statusText }));
+        // Usamos la respuesta CLONADA aquí
+        const errorData = await clonedRes.json().catch(() => ({
+            message: res.statusText || "Error desconocido del servidor"
+        }));
 
-        // Manejo específico para token expirado/inválido (401 en rutas protegidas)
+        // Manejo específico para token expirado/inválido (401)
         if (res.status === 401 && window.location.pathname.endsWith('dashboard.html')) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
@@ -37,12 +44,24 @@ async function handleResponse(res) {
             window.location.href = 'index.html?expired=true';
         }
 
-        // Lanza un error que será capturado por el bloque 'catch' en auth.js
-        const errorMessage = errorData.message || errorData.msg || res.statusText;
+        // Lanza un error con el mensaje de la API o el estado HTTP
+        const errorMessage = errorData.detalle || errorData.error || errorData.message || errorData.msg || res.statusText;
         throw new Error(`API Error: ${res.status} - ${errorMessage}`);
     }
-    // Si la respuesta es OK (2xx), devuelve el cuerpo en formato JSON
-    return res.json();
+
+    // 2. Manejo de Éxito (2xx) - LÓGICA CORREGIDA
+    try {
+        // 🟢 LEE la respuesta como texto primero.
+        const text = await res.text();
+        // Si el texto NO está vacío, parsea a JSON. Si está vacío, devuelve lista vacía ([]).
+        return text ? JSON.parse(text) : [];
+
+    } catch (e) {
+        // Esto captura errores si el cuerpo no es JSON.
+        console.error("Error al parsear JSON en handleResponse:", e);
+        // Devuelve una lista vacía para que el frontend pueda manejar la ausencia de datos
+        return [];
+    }
 }
 
 // ===================================
@@ -127,14 +146,100 @@ async function deleteDistribuidor(id) {
 }
 
 // ========================================
-// === API MOVIMIENTOS (PROTEGIDAS) ===
+// === API MOVIMIENTOS (PROTEGIDAS) - CRUD COMPLETO ===
 // ========================================
+
+/**
+ * Obtiene todos los movimientos de inventario. (READ - List)
+ * Asume endpoint GET /api/movimiento
+ */
 async function getMovimientos() {
   const res = await fetch(`${API_BASE}/movimiento`, {
     headers: getAuthHeaders()
   });
   return handleResponse(res);
 }
+
+/**
+ * Obtiene un movimiento específico por ID. (READ - Single)
+ * Asume endpoint GET /api/movimiento/{id}
+ */
+async function getMovimiento(id) {
+  const res = await fetch(`${API_BASE}/movimiento/${id}`, {
+    headers: getAuthHeaders()
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Crea un nuevo movimiento de inventario (Entrada o Salida). (CREATE)
+ * Asume endpoint POST /api/movimiento
+ */
+async function createMovimiento(data) {
+  const res = await fetch(`${API_BASE}/movimiento`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Actualiza un movimiento de inventario existente. (UPDATE)
+ * Asume endpoint PUT /api/movimiento/{id}
+ */
+async function updateMovimiento(id, data) {
+  const res = await fetch(`${API_BASE}/movimiento/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Elimina un movimiento de inventario. (DELETE)
+ * Asume endpoint DELETE /api/movimiento/{id}
+ */
+async function deleteMovimiento(id) {
+  const res = await fetch(`${API_BASE}/movimiento/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(null),
+  });
+  return handleResponse(res);
+}
+
+
+// ========================================
+// === API KARDEX (PROTEGIDAS) - SOLO LECTURA ===
+// ========================================
+
+/**
+ * Obtiene todos los registros de Kardex (historial de inventario). (READ)
+ * Asume endpoint GET /api/kardex
+ */
+async function getKardexs() {
+  const res = await fetch(`${API_BASE}/kardex`, {
+    headers: getAuthHeaders()
+  });
+  // Se deja esta función para compatibilidad con el código viejo
+  return handleResponse(res);
+}
+
+/**
+ * Obtiene el reporte completo de Kardex (solo para rol Administrador).
+ * @returns {Promise<Array>} Lista de registros del Kardex.
+ */
+async function getKardex() {
+  const url = `${API_BASE}/kardex/`;
+  const res = await fetch(url, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+  // Esta función usa el manejador de respuesta corregido
+  return handleResponse(res);
+}
+
 
 // ========================================
 // === API USUARIOS (PROTEGIDAS) ===
