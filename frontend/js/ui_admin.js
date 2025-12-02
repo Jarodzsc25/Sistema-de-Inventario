@@ -464,9 +464,22 @@ async function renderMovimientoList() {
  * Se corrigió el manejo de 'E' y 'S' en la edición y se usó la plantilla simplificada.
  * @param {object} movimiento - Objeto movimiento si es edición, null si es creación.
  */
+/**
+ * Renderiza el formulario de creación o edición de Movimiento.
+ * Se corrigió el manejo de 'E' y 'S' en la edición y se usó la plantilla simplificada.
+ * @param {object} movimiento - Objeto movimiento si es edición, null si es creación.
+ */
 async function renderMovimientoForm(movimiento = null) {
     const isEdit = movimiento !== null;
     const title = isEdit ? `Editar Movimiento #${movimiento.id_movimiento}` : "Registrar Movimiento de Inventario";
+
+    // 1. Cargar datos necesarios: Distribuidores (para Entradas)
+    let distribuidores = [];
+    try {
+        distribuidores = await getDistribuidores();
+    } catch (e) {
+        console.error("No se pudo cargar la lista de distribuidores.", e);
+    }
 
     // Función auxiliar para formatear la fecha
     function formatDateTimeLocal(dateString) {
@@ -488,6 +501,12 @@ async function renderMovimientoForm(movimiento = null) {
     } else if (tipo === 'SALIDA' || tipo === 'V' || tipo === 'S') {
         tipoValor = 'S';
     }
+
+    // Determinar la etiqueta inicial
+    const initialLabel = tipoValor === 'E' ? 'ID Distribuidor *' : 'ID Cliente *';
+    const initialPlaceholder = tipoValor === 'E' ? 'ID de Distribuidor/Proveedor' : 'ID de Persona/Cliente';
+    const initialValue = tipoValor === 'E' ? (movimiento?.id_distribuidor || '') : (movimiento?.id_cliente || '');
+
 
     const htmlForm = `
         <h4>${title}</h4>
@@ -548,10 +567,11 @@ async function renderMovimientoForm(movimiento = null) {
                     <input type="number" class="form-control" id="idElaborador" min="1"
                            value="${isEdit ? movimiento?.id_elaborador || '' : ''}" placeholder="ID de Usuario">
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="idCliente" class="form-label">ID Cliente</label>
-                    <input type="number" class="form-control" id="idCliente" min="1"
-                           value="${isEdit ? movimiento?.id_cliente || '' : ''}" placeholder="ID de Persona/Cliente">
+
+                <div class="col-md-4 mb-3" id="relacionContainer">
+                    <label for="idRelacion" class="form-label" id="relacionLabel">${initialLabel}</label>
+                    <input type="number" class="form-control" id="idRelacion" min="1"
+                           value="${initialValue}" placeholder="${initialPlaceholder}">
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="idDocumento" class="form-label">ID Documento</label>
@@ -568,30 +588,61 @@ async function renderMovimientoForm(movimiento = null) {
 
     document.getElementById("contentArea").innerHTML = htmlForm;
 
+    // 3. Lógica JavaScript para hacer el campo dinámico
+    const tipoMovimientoSelect = document.getElementById("tipoMovimiento");
+    const relacionLabel = document.getElementById("relacionLabel");
+    const idRelacionInput = document.getElementById("idRelacion");
+
+    // Función que actualiza la etiqueta y el placeholder
+    function updateRelacionField(tipo) {
+        if (tipo === 'E') {
+            relacionLabel.textContent = 'ID Distribuidor *';
+            idRelacionInput.placeholder = 'ID de Distribuidor/Proveedor';
+        } else if (tipo === 'S') {
+            relacionLabel.textContent = 'ID Cliente *';
+            idRelacionInput.placeholder = 'ID de Persona/Cliente';
+        } else {
+             relacionLabel.textContent = 'ID Relación';
+             idRelacionInput.placeholder = 'Seleccione Tipo (E/S) primero';
+        }
+        // Nota: Mantenemos el campo requerido para ambos casos.
+        idRelacionInput.required = (tipo === 'E' || tipo === 'S');
+    }
+
+    // Listener para el cambio del tipo de movimiento
+    tipoMovimientoSelect.addEventListener('change', (e) => {
+        updateRelacionField(e.target.value);
+    });
+
+    // Asegurar que el campo se inicialice con la etiqueta correcta
+    updateRelacionField(tipoValor);
+
    // --- Lógica de envío del Formulario ---
     document.getElementById("movimientoForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const id = document.getElementById("movimientoId").value;
+        const tipoSeleccionado = document.getElementById("tipoMovimiento").value.trim();
+        const relacionId = document.getElementById("idRelacion").value ? parseInt(document.getElementById("idRelacion").value) : null;
 
         // RECUPERACIÓN DE DATOS (Unitario, Cantidad y Producto son obligatorios)
         const data = {
-            // Aseguramos que tipo y glosa no sean cadenas vacías
-            tipo: document.getElementById("tipoMovimiento").value.trim(),
+            tipo: tipoSeleccionado,
             fecha: document.getElementById("fecha").value,
             glosa: document.getElementById("glosa").value.trim(),
 
-            // Opcionales (manejo de null ya está bien)
             observacion: document.getElementById("observacion").value.trim() || null,
             id_elaborador: document.getElementById("idElaborador").value ?
                 parseInt(document.getElementById("idElaborador").value) : null,
-            id_cliente: document.getElementById("idCliente").value ?
-                parseInt(document.getElementById("idCliente").value) : null,
+
+            // 🚀 ASIGNACIÓN DINÁMICA DE ID_CLIENTE O ID_DISTRIBUIDOR
+            id_cliente: tipoSeleccionado === 'S' ? relacionId : null,
+            id_distribuidor: tipoSeleccionado === 'E' ? relacionId : null,
+
             id_documento: document.getElementById("idDocumento").value ?
                 parseInt(document.getElementById("idDocumento").value) : null,
 
-            // Obligatorios que deben ser números: CORRECCIÓN CLAVE
-            // Si el campo está vacío, enviamos null, lo cual activa la validación 400 del backend.
+            // Obligatorios que deben ser números:
             id_producto: document.getElementById("idProducto").value ? parseInt(document.getElementById("idProducto").value) : null,
             cantidad: document.getElementById("cantidad").value ?
                 parseFloat(document.getElementById("cantidad").value) : null,
@@ -599,18 +650,14 @@ async function renderMovimientoForm(movimiento = null) {
                 parseFloat(document.getElementById("unitario").value) : null,
         };
 
-        // 🚀 CORRECCIÓN DEL ERROR DE DECLARACIÓN DUPLICADA 🚀
-        // LÓGICA DE LIMPIEZA: Protege los campos obligatorios de ser eliminados.
-        // Solo elimina los campos opcionales que son nulos, vacíos o NaN.
+        // LÓGICA DE LIMPIEZA: Solo elimina los campos opcionales que son nulos, vacíos o NaN.
         const mandatoryFields = ['id_producto', 'cantidad', 'unitario', 'tipo', 'fecha', 'glosa'];
         Object.keys(data).forEach(key => {
-            if (!mandatoryFields.includes(key)) {
-                // Elimina opcionales si son nulos, vacíos o NaN
+            if (!mandatoryFields.includes(key) && key !== 'id_cliente' && key !== 'id_distribuidor') { // Excluir los IDs dinámicos de la limpieza general
                 if (data[key] === null || data[key] === "" || isNaN(data[key])) {
                     delete data[key];
                 }
             }
-            // Los obligatorios (incluso si son NaN) se mantienen para que el backend los valide.
         });
 
         try {
@@ -649,7 +696,7 @@ async function renderKardexReporte() {
         // Usar getKardex() (singular) de api.js
         const kardex = await getKardex();
 
-        // 🛑 LÓGICA DE CÁLCULO DEL SALDO ACUMULADO (SOLUCIÓN AL "UNDEFINED") 🛑
+        // LÓGICA DE CÁLCULO DEL SALDO ACUMULADO (SOLUCIÓN AL "UNDEFINED")
         let saldoAcumulado = 0;
 
         // Mapeamos el array para calcular y añadir la columna saldo_final
@@ -666,7 +713,7 @@ async function renderKardexReporte() {
 
             return k;
         });
-        // 🛑 FIN LÓGICA DE CÁLCULO DEL SALDO ACUMULADO 🛑
+        //  FIN LÓGICA DE CÁLCULO DEL SALDO ACUMULADO
 
         // Si no hay datos (usamos el array procesado)
         if (kardexConSaldo.length === 0) {

@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se modifico tanto el backend como el frontend para agregar el kardex y solucionar los bugs que estos causaron">
+    <list default="true" id="a15978e3-a8d4-403e-bdd6-1188fe3e25de" name="Changes" comment="se modifco varias cosas para mejor funcionamiento">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/js/api.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/api.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/js/ui_admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/js/ui_vendedor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/kardex.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/kardex.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/movimiento.py" beforeDir="false" afterPath="$PROJECT_DIR$/routes/movimiento.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,14 +146,6 @@
       <workItem from="1760296525183" duration="3494000" />
       <workItem from="1760452231038" duration="3356000" />
       <workItem from="1760559293097" duration="48000" />
-    </task>
-    <task id="LOCAL-00003" summary="guardar conexion">
-      <option name="closed" value="true" />
-      <created>1759604295772</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1759604295772</updated>
     </task>
     <task id="LOCAL-00004" summary="guardar menu para conexion">
       <option name="closed" value="true" />
@@ -544,7 +531,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763145507510</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="se modifco varias cosas para mejor funcionamiento">
+      <option name="closed" value="true" />
+      <created>1764690999072</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1764690999072</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -562,7 +557,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="se cambio varias partes del codigo y se volvio a configurar y se mejor la interfaz para si no usar tanto el postman" />
     <MESSAGE value="se modifico nuevamente el codigo para agrgar las tablas documento, movimiento y kardex. no hay problema para mostrar datos. se provara despues para editar agregar y borrar." />
     <MESSAGE value="se elimino la carpeta" />
     <MESSAGE value="se empieza a reestructurar el archivo general" />
@@ -587,7 +581,8 @@
     <MESSAGE value="se añadieron cambios para evitar que se pongan numeros y correos de mas" />
     <MESSAGE value="se dieron los ultimos cambios" />
     <MESSAGE value="se modifico tanto el backend como el frontend para agregar el kardex y solucionar los bugs que estos causaron" />
-    <option name="LAST_COMMIT_MESSAGE" value="se modifico tanto el backend como el frontend para agregar el kardex y solucionar los bugs que estos causaron" />
+    <MESSAGE value="se modifco varias cosas para mejor funcionamiento" />
+    <option name="LAST_COMMIT_MESSAGE" value="se modifco varias cosas para mejor funcionamiento" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Sistema_de_inventario$menu_grafico.coverage" NAME="menu_grafico Coverage Results" MODIFIED="1759929960806" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
