@@ -24,7 +24,7 @@ function getAuthHeaders(contentType = "application/json") {
 // =====================================
 // 2. FUNCIÓN AUXILIAR: Maneja la respuesta de la API (Éxito o Error)
 async function handleResponse(res) {
-    // 🛑 CORRECCIÓN CLAVE: Clona la respuesta para leer el cuerpo
+    // CORRECCIÓN CLAVE: Clona la respuesta para leer el cuerpo
     // sin afectar el flujo si res.json() falla.
     const clonedRes = res.clone();
 
@@ -51,7 +51,7 @@ async function handleResponse(res) {
 
     // 2. Manejo de Éxito (2xx) - LÓGICA CORREGIDA
     try {
-        // 🟢 LEE la respuesta como texto primero.
+        // LEE la respuesta como texto primero.
         const text = await res.text();
         // Si el texto NO está vacío, parsea a JSON. Si está vacío, devuelve lista vacía ([]).
         return text ? JSON.parse(text) : [];
@@ -209,7 +209,6 @@ async function deleteMovimiento(id) {
   return handleResponse(res);
 }
 
-
 // ========================================
 // === API KARDEX (PROTEGIDAS) - SOLO LECTURA ===
 // ========================================
@@ -237,6 +236,63 @@ async function getKardex() {
     headers: getAuthHeaders(),
   });
   // Esta función usa el manejador de respuesta corregido
+  return handleResponse(res);
+}
+
+// ========================================
+// === API DOCUMENTOS (PROTEGIDAS) ===
+// ========================================
+
+// ========================================
+// === API DOCUMENTOS (PROTEGIDAS) ===
+// ========================================
+
+/**
+ * Obtiene todos los documentos. (READ - List)
+ */
+async function getDocumentos() {
+  // AÑADIDO: La barra inclinada final (/)
+  const res = await fetch(`${API_BASE}/documento/`, {
+    headers: getAuthHeaders()
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Crea un nuevo documento. (CREATE)
+ */
+async function createDocumento(data) {
+  // AÑADIDO: La barra inclinada final (/)
+  const res = await fetch(`${API_BASE}/documento/`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Actualiza un documento existente. (UPDATE)
+ */
+// ESTAS ESTÁN CORRECTAS porque usan el ID
+async function updateDocumento(id, data) {
+  const res = await fetch(`${API_BASE}/documento/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  return handleResponse(res);
+}
+
+/**
+ * Elimina un documento. (DELETE)
+ */
+// ESTAS ESTÁN CORRECTAS porque usan el ID
+async function deleteDocumento(id) {
+  const res = await fetch(`${API_BASE}/documento/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(null),
+  });
   return handleResponse(res);
 }
 

@@ -4,8 +4,8 @@ from datetime import datetime
 import sys
 from security import token_required
 
-# Blueprint Corregido (Eliminar strict_slashes=False del constructor)
-movimiento_bp = Blueprint('movimiento_bp', __name__)
+# Blueprint (Se asume que la URL es /api/movimiento)
+movimiento_bp = Blueprint('movimiento_bp', __name__, url_prefix='/api/movimiento')
 
 
 # Función para obtener los campos de Movimiento
@@ -17,60 +17,95 @@ def get_movimiento_fields(data):
         data.get('fecha', fecha_default),
         data.get('glosa'),
         data.get('observacion'),
-        # id_elaborador lo obtendremos del token
         data.get('id_cliente'),
-        data.get('id_documento')
+        data.get('id_documento'),
+        # Campos necesarios para la inserción en KARDEX:
+        data.get('id_producto'),
+        data.get('cantidad'),
+        data.get('unitario')
     )
 
 
 # --- GET y POST ---
-# Aplicar strict_slashes=False a la ruta principal para evitar 308
 @movimiento_bp.route('/', methods=['GET', 'POST'], strict_slashes=False)
 @token_required
-def handle_movimientos(): # <--- CORREGIDO: Ya no espera 'current_user'
-    # Obtener el ID del usuario logeado
-    # *** CORRECCIÓN ***
+def handle_movimientos():
+    # Obtener el ID del usuario logeado desde el request (asumiendo que 'token_required' lo setea)
     id_usuario_loggeado = request.user_id
 
     if request.method == 'POST':
-        # --- CREATE ---
+        # --- CREATE (Crea Movimiento y la entrada de Kardex) ---
         data = request.get_json()
 
-        # Obtenemos los campos, omitiendo id_elaborador de la data
-        tipo, fecha, glosa, observacion, id_cliente, id_documento = get_movimiento_fields(data)
+        # Obtenemos todos los campos, incluyendo los de Kardex
+        tipo, fecha, glosa, observacion, id_cliente, id_documento, \
+            id_producto, cantidad, unitario = get_movimiento_fields(data)
 
         # Usamos el id_usuario del token como id_elaborador
         id_elaborador = id_usuario_loggeado
 
-        if not all([tipo, glosa]):
-            return jsonify({"error": "Faltan campos obligatorios: tipo (E/S) y glosa."}), 400
+        # --- Validación de campos obligatorios para Movimiento y Kardex ---
+        if not all([tipo, glosa, id_producto, cantidad, unitario]):
+            # Este error 400 ocurre si el frontend no está enviando los 5 campos
+            return jsonify({
+                "error": "Faltan campos obligatorios: tipo (E/S), glosa, id_producto, cantidad y unitario."
+            }), 400
+
         if tipo not in ('E', 'S'):
             return jsonify({"error": "El campo 'tipo' debe ser 'E' (Entrada) o 'S' (Salida)."}), 400
 
-        sql = """
-            INSERT INTO movimiento (tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s) 
-            RETURNING id_movimiento
-        """
-        params = (tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento)
-
         try:
-            results = execute_query(sql, params, fetch=True)
-            new_id = results[0]['id_movimiento'] if results else None
-            print(f"Movimiento creado: id_movimiento={new_id}, tipo={tipo}, elaborador={id_elaborador}")
+            cantidad = float(cantidad)
+            unitario = float(unitario)
+            subtotal = cantidad * unitario  # Cálculo del subtotal
+
+            # 1. INSERTAR EN TABLA MOVIMIENTO
+            sql_movimiento = """
+                INSERT INTO movimiento (tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s) 
+                RETURNING id_movimiento
+            """
+            params_movimiento = (tipo, fecha, glosa, observacion, id_elaborador, id_cliente, id_documento)
+
+            # Usamos fetch=True para obtener el ID del movimiento
+            results = execute_query(sql_movimiento, params_movimiento, fetch=True)
+            id_movimiento_generado = results[0]['id_movimiento'] if results else None
+
+            if not id_movimiento_generado:
+                raise Exception("No se pudo obtener el ID del movimiento recién insertado.")
+
+            # 2. INSERTAR EN TABLA KARDEX
+            # 🚀 La columna es 'subtotal' (corregido)
+            sql_kardex = """
+                INSERT INTO kardex (id_movimiento, id_producto, cantidad, unitario, subtotal)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            params_kardex = (
+                id_movimiento_generado,
+                id_producto,
+                cantidad,
+                unitario,
+                subtotal
+            )
+            execute_query(sql_kardex, params_kardex)
+
+            print(f"Movimiento y Kardex creados: id_movimiento={id_movimiento_generado}, tipo={tipo}")
+
             return jsonify({
-                "mensaje": "Movimiento creado con éxito.",
+                "mensaje": "Movimiento y registro de Kardex creados con éxito.",
                 "movimiento": {
-                    "id_movimiento": new_id,
+                    "id_movimiento": id_movimiento_generado,
                     "tipo": tipo,
                     "fecha": fecha,
                     "glosa": glosa
                 }
             }), 201
+
         except Exception as e:
             print(f"Error en POST /api/movimiento/: {e}", file=sys.stderr)
+            # El error "suttotal" aparece aquí si la DB está mal o si el SQL no está corregido
             return jsonify({
-                "error": "Error al crear movimiento. Verifica las FK (cliente, documento).",
+                "error": "Error al crear movimiento o su registro de Kardex. Verifica FKs o datos numéricos.",
                 "detalle": str(e)
             }), 400
 
@@ -88,9 +123,7 @@ def handle_movimientos(): # <--- CORREGIDO: Ya no espera 'current_user'
 # --- GET, PUT, DELETE por id_movimiento ---
 @movimiento_bp.route('/<int:id_movimiento>', methods=['GET', 'PUT', 'DELETE'])
 @token_required
-def handle_movimiento(id_movimiento): # <--- CORREGIDO: Ya no espera 'current_user'
-    # Obtener el ID del usuario logeado
-    # *** CORRECCIÓN ***
+def handle_movimiento(id_movimiento):
     id_usuario_loggeado = request.user_id
 
     if request.method == 'GET':
@@ -109,10 +142,9 @@ def handle_movimiento(id_movimiento): # <--- CORREGIDO: Ya no espera 'current_us
         # --- UPDATE ---
         data = request.get_json()
 
-        # Obtenemos los campos, omitiendo id_elaborador de la data
-        tipo, fecha, glosa, observacion, id_cliente, id_documento = get_movimiento_fields(data)
+        # Obtenemos los campos de Movimiento. Los campos de Kardex no se actualizan en este endpoint
+        tipo, fecha, glosa, observacion, id_cliente, id_documento, *rest = get_movimiento_fields(data)
 
-        # Establecemos el id_elaborador con el usuario actual
         id_elaborador = id_usuario_loggeado
 
         if not all([tipo, glosa]):
@@ -140,6 +172,8 @@ def handle_movimiento(id_movimiento): # <--- CORREGIDO: Ya no espera 'current_us
 
     elif request.method == 'DELETE':
         # --- DELETE ---
+        # ATENCIÓN: La restricción FOREIGN KEY ON DELETE CASCADE en la tabla 'kardex'
+        # debe asegurar que al eliminar el movimiento, su registro de Kardex se elimine automáticamente.
         sql = "DELETE FROM movimiento WHERE id_movimiento = %s"
         try:
             row_count = execute_query(sql, (id_movimiento,))

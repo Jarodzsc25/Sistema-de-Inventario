@@ -32,7 +32,6 @@ document.getElementById("menuUsuarios")?.addEventListener("click", async () => {
   document.getElementById("btnNuevoUsuario").addEventListener("click", () =>
     mostrarFormularioUsuario(null, roles)
   );
-
   document.querySelectorAll(".btn-edit").forEach(btn =>
     btn.addEventListener("click", e => {
       const id = e.target.dataset.id;
@@ -40,7 +39,6 @@ document.getElementById("menuUsuarios")?.addEventListener("click", async () => {
       mostrarFormularioUsuario(user, roles);
     })
   );
-
   document.querySelectorAll(".btn-del").forEach(btn =>
     btn.addEventListener("click", async e => {
       const id = e.target.dataset.id;
@@ -376,7 +374,7 @@ async function mostrarFormularioProducto(producto = null, distribuidores = []) {
 // --------------------------------------------------------------------
 
 // ====================================================================
-// === LÓGICA DE GESTIÓN DE MOVIMIENTOS (CRUD) ===
+// === LÓGICA DE GESTIÓN DE MOVIMIENTOS (CRUD)
 // ====================================================================
 
 /**
@@ -386,55 +384,58 @@ document.getElementById("menuMovimientos")?.addEventListener("click", async () =
     renderMovimientoList();
 });
 
+
 /**
- * Renderiza la lista de movimientos con botones de CRUD.
+ * Renderiza la lista de movimientos con botones de CRUD, usando solo los campos disponibles en la API de listado.
+ * (Producto y Cantidad no están disponibles en el listado).
  */
 async function renderMovimientoList() {
     document.getElementById("contentArea").innerHTML = '<h4>Cargando Movimientos...</h4>';
     try {
         const movimientos = await getMovimientos();
-
         const html = `
-            <h4>Gestión de Movimientos</h4>
-            <button id="btnCrearMovimiento" class="btn btn-success mb-3">Crear Nuevo Movimiento</button>
-            <table class="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tipo</th>
-                  <th>Producto</th>
-                  <th>Cantidad</th>
-                  <th>Fecha</th>
-                  <th>Glosa</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${movimientos
-                  .map(
-                    (m) =>
-                      `<tr>
-                        <td>${m.id_movimiento}</td>
-                        <td class="${m.tipo === 'ENTRADA' ? 'text-success' : 'text-danger'}">${m.tipo}</td>
-                        <td>${m.producto_nombre || 'N/A'}</td>
-                        <td>${m.cantidad}</td>
-                        <td>${new Date(m.fecha).toLocaleDateString()}</td>
-                        <td>${m.glosa || ''}</td>
-                        <td>
-                          <button class="btn btn-sm btn-info btn-edit-mov" data-id="${m.id_movimiento}">Editar</button>
-                          <button class="btn btn-sm btn-danger btn-delete-mov" data-id="${m.id_movimiento}">Eliminar</button>
-                        </td>
-                      </tr>`
-                  )
-                  .join("")}
-              </tbody>
-            </table>`;
-
+    <h4>Gestión de Movimientos </h4>
+    <button id="btnCrearMovimiento" class="btn btn-success mb-3">Crear Nuevo Movimiento</button>
+    <table class="table table-bordered table-striped table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tipo</th>
+          <th>Fecha</th>
+          <th>Glosa</th>
+          <th>Observación</th>
+          <th>Elaborador (ID)</th>
+          <th>Cliente (ID)</th>
+          <th>Documento (ID)</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${movimientos
+          .map(
+            (m) =>
+              `<tr>
+                <td>${m.id_movimiento}</td>
+                <td class="${(m.tipo === 'E' || m.tipo === 'C') ? 'text-success' : 'text-danger'}">${m.tipo}</td>
+                <td>${new Date(m.fecha).toLocaleDateString()}</td>
+                <td>${m.glosa || ''}</td>
+                <td>${m.observacion || ''}</td>
+                <td>${m.id_elaborador || 'N/A'}</td>
+                <td>${m.id_cliente || 'N/A'}</td>
+                <td>${m.id_documento || 'N/A'}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary btn-edit-mov" data-id="${m.id_movimiento}">Editar</button>
+                  <button class="btn btn-sm btn-danger btn-delete-mov" data-id="${m.id_movimiento}">Eliminar</button>
+                </td>
+              </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>`;
         document.getElementById("contentArea").innerHTML = html;
 
         // --- Eventos de Botones de CRUD ---
         document.getElementById("btnCrearMovimiento").addEventListener("click", () => renderMovimientoForm());
-
         document.querySelectorAll(".btn-edit-mov").forEach(button => {
             button.addEventListener("click", async (e) => {
                 const id = e.target.getAttribute("data-id");
@@ -442,7 +443,6 @@ async function renderMovimientoList() {
                 renderMovimientoForm(movimiento);
             });
         });
-
         document.querySelectorAll(".btn-delete-mov").forEach(button => {
             button.addEventListener("click", async (e) => {
                 const id = e.target.getAttribute("data-id");
@@ -453,7 +453,6 @@ async function renderMovimientoList() {
                 }
             });
         });
-
     } catch (error) {
         console.error("Error al cargar movimientos:", error);
         document.getElementById("contentArea").innerHTML = `<div class="alert alert-danger">Error al cargar movimientos: ${error.message}</div>`;
@@ -462,62 +461,157 @@ async function renderMovimientoList() {
 
 /**
  * Renderiza el formulario de creación o edición de Movimiento.
+ * Se corrigió el manejo de 'E' y 'S' en la edición y se usó la plantilla simplificada.
  * @param {object} movimiento - Objeto movimiento si es edición, null si es creación.
  */
 async function renderMovimientoForm(movimiento = null) {
     const isEdit = movimiento !== null;
-    const title = isEdit ? `Editar Movimiento #${movimiento.id_movimiento}` : "➕ Crear Nuevo Movimiento";
+    const title = isEdit ? `Editar Movimiento #${movimiento.id_movimiento}` : "Registrar Movimiento de Inventario";
+
+    // Función auxiliar para formatear la fecha
+    function formatDateTimeLocal(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        return `${y}-${m}-${d}T${h}:${min}`;
+    }
+
+    // Determinar el valor del campo tipo ('E' o 'S')
+    let tipoValor = '';
+    const tipo = movimiento?.tipo;
+    if (tipo === 'ENTRADA' || tipo === 'C' || tipo === 'E') {
+        tipoValor = 'E';
+    } else if (tipo === 'SALIDA' || tipo === 'V' || tipo === 'S') {
+        tipoValor = 'S';
+    }
 
     const htmlForm = `
         <h4>${title}</h4>
-        <form id="movimientoForm">
+        <form id="movimientoForm" class="mt-3">
             <input type="hidden" id="movimientoId" value="${isEdit ? movimiento.id_movimiento : ''}">
 
             <div class="mb-3">
-                <label for="tipoMovimiento" class="form-label">Tipo de Movimiento</label>
+                <label for="tipoMovimiento" class="form-label">Tipo de Movimiento *</label>
                 <select class="form-select" id="tipoMovimiento" required>
                     <option value="">Seleccione...</option>
-                    <option value="ENTRADA" ${isEdit && movimiento.tipo === 'ENTRADA' ? 'selected' : ''}>ENTRADA</option>
-                    <option value="SALIDA" ${isEdit && movimiento.tipo === 'SALIDA' ? 'selected' : ''}>SALIDA</option>
+                    <option value="E" ${tipoValor === 'E' ? 'selected' : ''}>ENTRADA (Reposición/Compra)</option>
+                    <option value="S" ${tipoValor === 'S' ? 'selected' : ''}>SALIDA (Venta/Consumo)</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label for="idProducto" class="form-label">Producto (ID)</label>
+                <label for="idProducto" class="form-label">Producto (ID) *</label>
                 <input type="number" class="form-control" id="idProducto" required min="1"
-                       value="${isEdit ? movimiento.id_producto : ''}">
+                       value="${isEdit ? movimiento.id_producto : ''}" placeholder="Ingrese el ID del producto">
             </div>
 
             <div class="mb-3">
-                <label for="cantidad" class="form-label">Cantidad</label>
-                <input type="number" class="form-control" id="cantidad" required min="1"
-                       value="${isEdit ? movimiento.cantidad : ''}">
+                <label for="cantidad" class="form-label">Cantidad *</label>
+                <input type="number" step="any" class="form-control" id="cantidad" required min="0.01"
+                       value="${isEdit ? movimiento.cantidad : ''}" placeholder="Cantidad a mover">
             </div>
 
             <div class="mb-3">
-                <label for="glosa" class="form-label">Glosa/Descripción</label>
+                <label for="unitario" class="form-label">Costo/Precio Unitario *</label>
+                <input type="number" step="0.01" class="form-control" id="unitario" required min="0.01"
+                       value="${isEdit ? movimiento?.unitario || '' : ''}" placeholder="Costo por unidad">
+            </div>
+
+            <div class="mb-3">
+                <label for="glosa" class="form-label">Glosa/Descripción *</label>
                 <input type="text" class="form-control" id="glosa" required
-                       value="${isEdit ? movimiento.glosa : ''}">
+                       value="${isEdit ? movimiento?.glosa || '' : ''}" placeholder="Ej: Venta #123, Reposición matutina">
             </div>
 
-            <button type="submit" class="btn btn-primary">${isEdit ? 'Guardar Cambios' : 'Crear Movimiento'}</button>
-            <button type="button" class="btn btn-secondary" onclick="renderMovimientoList()">Cancelar</button>
+            <hr>
+            <h5>Detalles Adicionales (Opcional)</h5>
+            <small class="text-muted mb-3 d-block">Estos campos son necesarios para el registro completo del movimiento en el Kardex.</small>
+
+            <div class="mb-3">
+                <label for="fecha" class="form-label">Fecha y Hora</label>
+                <input type="datetime-local" class="form-control" id="fecha" required
+                       value="${formatDateTimeLocal(movimiento?.fecha)}">
+            </div>
+
+            <div class="mb-3">
+                <label for="observacion" class="form-label">Observación</label>
+                <textarea class="form-control" id="observacion" placeholder="Detalles extra del movimiento">${isEdit ? movimiento?.observacion || '' : ''}</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="idElaborador" class="form-label">ID Elaborador</label>
+                    <input type="number" class="form-control" id="idElaborador" min="1"
+                           value="${isEdit ? movimiento?.id_elaborador || '' : ''}" placeholder="ID de Usuario">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="idCliente" class="form-label">ID Cliente</label>
+                    <input type="number" class="form-control" id="idCliente" min="1"
+                           value="${isEdit ? movimiento?.id_cliente || '' : ''}" placeholder="ID de Persona/Cliente">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="idDocumento" class="form-label">ID Documento</label>
+                    <input type="number" class="form-control" id="idDocumento" min="1"
+                           value="${isEdit ? movimiento?.id_documento || '' : ''}" placeholder="ID de Factura/Nota">
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">${isEdit ? 'Guardar Movimiento' : 'Registrar Movimiento'}</button>
+                <button type="button" class="btn btn-secondary" onclick="renderMovimientoList()">Cancelar</button>
+            </div>
         </form>`;
 
     document.getElementById("contentArea").innerHTML = htmlForm;
 
-    // --- Lógica de envío del Formulario ---
+   // --- Lógica de envío del Formulario ---
     document.getElementById("movimientoForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
         const id = document.getElementById("movimientoId").value;
+
+        // RECUPERACIÓN DE DATOS (Unitario, Cantidad y Producto son obligatorios)
         const data = {
-            // Nota: Tu DB usa CHAR(1). Tu backend debe mapear 'ENTRADA' a 'C'/'E' y 'SALIDA' a 'V'/'S'
-            tipo: document.getElementById("tipoMovimiento").value,
-            id_producto: parseInt(document.getElementById("idProducto").value),
-            cantidad: parseInt(document.getElementById("cantidad").value),
-            glosa: document.getElementById("glosa").value,
+            // Aseguramos que tipo y glosa no sean cadenas vacías
+            tipo: document.getElementById("tipoMovimiento").value.trim(),
+            fecha: document.getElementById("fecha").value,
+            glosa: document.getElementById("glosa").value.trim(),
+
+            // Opcionales (manejo de null ya está bien)
+            observacion: document.getElementById("observacion").value.trim() || null,
+            id_elaborador: document.getElementById("idElaborador").value ?
+                parseInt(document.getElementById("idElaborador").value) : null,
+            id_cliente: document.getElementById("idCliente").value ?
+                parseInt(document.getElementById("idCliente").value) : null,
+            id_documento: document.getElementById("idDocumento").value ?
+                parseInt(document.getElementById("idDocumento").value) : null,
+
+            // Obligatorios que deben ser números: CORRECCIÓN CLAVE
+            // Si el campo está vacío, enviamos null, lo cual activa la validación 400 del backend.
+            id_producto: document.getElementById("idProducto").value ? parseInt(document.getElementById("idProducto").value) : null,
+            cantidad: document.getElementById("cantidad").value ?
+                parseFloat(document.getElementById("cantidad").value) : null,
+            unitario: document.getElementById("unitario").value ?
+                parseFloat(document.getElementById("unitario").value) : null,
         };
+
+        // 🚀 CORRECCIÓN DEL ERROR DE DECLARACIÓN DUPLICADA 🚀
+        // LÓGICA DE LIMPIEZA: Protege los campos obligatorios de ser eliminados.
+        // Solo elimina los campos opcionales que son nulos, vacíos o NaN.
+        const mandatoryFields = ['id_producto', 'cantidad', 'unitario', 'tipo', 'fecha', 'glosa'];
+        Object.keys(data).forEach(key => {
+            if (!mandatoryFields.includes(key)) {
+                // Elimina opcionales si son nulos, vacíos o NaN
+                if (data[key] === null || data[key] === "" || isNaN(data[key])) {
+                    delete data[key];
+                }
+            }
+            // Los obligatorios (incluso si son NaN) se mantienen para que el backend los valide.
+        });
 
         try {
             if (id) {
@@ -530,11 +624,10 @@ async function renderMovimientoForm(movimiento = null) {
             renderMovimientoList(); // Volver a la lista
         } catch (error) {
             console.error("Error al guardar movimiento:", error);
-            alert(`Error al guardar el movimiento. Revisa la consola o los datos ingresados: ${error.message}`);
+            alert(`Error al guardar el movimiento. Revisa la consola o los datos ingresados: ${error.message || error}`);
         }
     });
 }
-
 
 // ====================================================================
 // === LÓGICA DE VISUALIZACIÓN DE KARDEX (REPORTE/READ) - CONSOLIDADA ===
@@ -549,14 +642,45 @@ document.getElementById("menuKardex")?.addEventListener("click", renderKardexRep
 
 async function renderKardexReporte() {
     const content = document.getElementById("contentArea");
+    // Mensaje de carga inicial
     content.innerHTML = `<h4>Reporte de Kardex</h4><div id="kardexTableContainer">Cargando reporte...</div>`;
 
     try {
         // Usar getKardex() (singular) de api.js
         const kardex = await getKardex();
 
+        // 🛑 LÓGICA DE CÁLCULO DEL SALDO ACUMULADO (SOLUCIÓN AL "UNDEFINED") 🛑
+        let saldoAcumulado = 0;
+
+        // Mapeamos el array para calcular y añadir la columna saldo_final
+        const kardexConSaldo = kardex.map(k => {
+            // Aseguramos que los valores sean números, usando 0 si son null o no están definidos
+            const entrada = parseFloat(k.cantidad_entrada) || 0;
+            const salida = parseFloat(k.cantidad_salida) || 0;
+
+            // El saldo acumulado es la suma del saldo anterior + entradas - salidas
+            saldoAcumulado += (entrada - salida);
+
+            // Añadimos la nueva propiedad al objeto que enviaremos a la tabla
+            k.saldo_final = saldoAcumulado;
+
+            return k;
+        });
+        // 🛑 FIN LÓGICA DE CÁLCULO DEL SALDO ACUMULADO 🛑
+
+        // Si no hay datos (usamos el array procesado)
+        if (kardexConSaldo.length === 0) {
+            document.getElementById("kardexTableContainer").innerHTML = `
+                <div class="alert alert-info">
+                    No se encontraron registros en el Kardex. Por favor, cree movimientos de inventario para generar el reporte.
+                </div>
+            `;
+            return;
+        }
+
+        // Si hay datos, construir la tabla
         const html = `
-            <p class="text-info">El reporte de Kardex muestra todos los movimientos de inventario por producto.</p>
+            <p class="text-info">El reporte de Kardex muestra todos los movimientos de inventario por producto. El Saldo Final se calcula acumulativamente.</p>
             <table class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
@@ -572,7 +696,7 @@ async function renderKardexReporte() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${kardex
+                    ${kardexConSaldo // Usamos el array modificado (kardexConSaldo)
                         .map(
                             (k) =>
                                 `<tr>
@@ -583,7 +707,7 @@ async function renderKardexReporte() {
                                     <td>${k.tipo_movimiento}</td>
                                     <td class="text-success">${k.cantidad_entrada !== null ? k.cantidad_entrada : ''}</td>
                                     <td class="text-danger">${k.cantidad_salida !== null ? k.cantidad_salida : ''}</td>
-                                    <td>${k.saldo_final !== null ? k.saldo_final : 'N/A'}</td>
+                                    <td>${k.saldo_final !== null ? k.saldo_final.toFixed(2) : 'N/A'}</td>
                                     <td>${k.subtotal}</td>
                                 </tr>`
                         )
@@ -595,7 +719,125 @@ async function renderKardexReporte() {
 
     } catch (error) {
         console.error("Error al cargar Kardex:", error);
-        // Mostrar un mensaje de error más útil, incluyendo el mensaje de la excepción de la API
-        document.getElementById("kardexTableContainer").innerHTML = `<div class="alert alert-danger">Error al cargar el reporte de Kardex: ${error.message || 'Verifica el servidor o la consola para detalles.'}</div>`;
+        // Mostrar un mensaje de error más útil
+        document.getElementById("kardexTableContainer").innerHTML = `
+            <div class="alert alert-danger">
+                <strong>Error al cargar el reporte de Kardex:</strong> ${error.message || 'Verifique que su servidor de Flask esté corriendo y la conexión a la base de datos.'}
+            </div>
+        `;
     }
+}
+// --- CRUD DOCUMENTOS ---
+document.getElementById("menuDocumentos")?.addEventListener("click", async () => {
+    renderDocumentoList();
+});
+async function renderDocumentoList() {
+    document.getElementById("contentArea").innerHTML = '<h4>Cargando Documentos...</h4>';
+    try {
+        const documentos = await getDocumentos();
+        let html = `
+            <div class="d-flex justify-content-between align-items-center">
+                <h4>Gestión de Documentos</h4>
+                <button class="btn btn-success btn-sm" id="btnNuevoDocumento">+ Nuevo Documento</button>
+            </div>
+            <table class="table table-striped mt-3">
+                <thead>
+                    <tr><th>ID</th><th>Número</th><th>Fecha</th><th>Acciones</th></tr>
+                </thead>
+                <tbody>
+                    ${documentos.map(d => `
+                        <tr>
+                            <td>${d.id_documento}</td>
+                            <td>${d.numero}</td>
+                            <td>${new Date(d.fecha).toLocaleDateString()}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm btn-edit-doc" data-id="${d.id_documento}">Editar</button>
+                                <button class="btn btn-danger btn-sm btn-del-doc" data-id="${d.id_documento}">Eliminar</button>
+                            </td>
+                        </tr>`).join('')}
+                </tbody>
+            </table>
+        `;
+        document.getElementById("contentArea").innerHTML = html;
+
+        document.getElementById("btnNuevoDocumento").addEventListener("click", () => mostrarFormularioDocumento(null));
+
+        document.querySelectorAll(".btn-edit-doc").forEach(btn => btn.addEventListener("click", async e => {
+            const id = e.target.dataset.id;
+            // Opcional: obtener el documento completo si la lista no tiene todos los campos
+            const documento = await getDocumentos().then(docs => docs.find(d => d.id_documento == id));
+            mostrarFormularioDocumento(documento);
+        }));
+        document.querySelectorAll(".btn-del-doc").forEach(btn => btn.addEventListener("click", async e => {
+            const id = e.target.dataset.id;
+            if (confirm("¿Seguro que deseas eliminar este documento?")) {
+                await deleteDocumento(id);
+                alert("Documento eliminado");
+                renderDocumentoList();
+            }
+        }));
+    } catch (error) {
+        console.error("Error al cargar documentos:", error);
+        document.getElementById("contentArea").innerHTML = `<div class="alert alert-danger">Error al cargar documentos: ${error.message}</div>`;
+    }
+}
+
+async function mostrarFormularioDocumento(documento = null) {
+    const isEdit = documento !== null;
+    const content = document.getElementById("contentArea");
+
+    // Función auxiliar para formatear la fecha
+    function formatDateInput(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    content.innerHTML = `
+        <h4>${isEdit ? "Editar Documento" : "Nuevo Documento"}</h4>
+        <form id="formDocumento" class="mt-3">
+            <input type="hidden" id="idDocumento" value="${documento?.id_documento || ''}">
+
+            <div class="mb-3">
+                <label>Número de Documento *</label>
+                <input type="text" class="form-control" id="numeroDoc" value="${documento?.numero || ''}" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Fecha *</label>
+                <input type="date" class="form-control" id="fechaDoc" value="${formatDateInput(documento?.fecha)}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">${isEdit ? "Guardar Cambios" : "Crear Documento"}</button>
+            <button type="button" class="btn btn-secondary" id="btnCancelarDoc">Cancelar</button>
+        </form>
+    `;
+    document.getElementById("btnCancelarDoc").addEventListener("click", renderDocumentoList);
+
+    document.getElementById("formDocumento").addEventListener("submit", async e => {
+        e.preventDefault();
+        const id = document.getElementById("idDocumento").value;
+
+        const data = {
+            numero: document.getElementById("numeroDoc").value.trim(),
+            fecha: document.getElementById("fechaDoc").value,
+        };
+
+        try {
+            if (isEdit) {
+                await updateDocumento(id, data);
+                alert("Documento actualizado correctamente");
+            } else {
+                await createDocumento(data);
+                alert("Documento creado correctamente");
+            }
+            renderDocumentoList();
+        } catch (error) {
+            console.error("Error al guardar documento:", error);
+            alert(`Error al guardar documento: ${error.message}`);
+        }
+    });
 }
